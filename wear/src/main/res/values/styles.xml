@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CleverObjectsGrid">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:numColumns">3</item>
+        <item name="android:verticalSpacing">@dimen/grid_spacing</item>
+        <item name="android:horizontalSpacing">@dimen/grid_spacing</item>
+        <item name="android:gravity">center</item>
+        <item name="android:stretchMode">columnWidth</item>
+    </style>
+</resources>
