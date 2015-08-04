@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">RetroFitTest</string>
+    <string name="app_name">CleverObjects</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
     <string name="title_activity_phrases_list">PhrasesList</string>
+    <string name="title_activity_need_setup">needSetup</string>
+    <string name="need_setup">Set up CleverObjects\n on your phone first</string>
 </resources>

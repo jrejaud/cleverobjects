@@ -10,4 +10,33 @@
         <item name="android:gravity">center</item>
         <item name="android:stretchMode">columnWidth</item>
     </style>
+
+    <style name="generic_wear_list_circle">
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:layout_width">20dp</item>
+        <item name="android:src">@drawable/wl_circle</item>
+    </style>
+
+    <style name="generic_wear_list_item">
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:fontFamily">sans-serif-condensed-light</item>
+        <item name="android:lineSpacingExtra">-4sp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="phrases_wear_list_item">
+        <item name="android:gravity">center</item>
+        <item name="android:text">Good Morning</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:fontFamily">sans-serif-condensed-light</item>
+        <item name="android:lineSpacingExtra">-4sp</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+
 </resources>

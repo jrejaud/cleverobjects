@@ -1,5 +1,9 @@
 package com.github.jrejaud.models;
 
+import android.util.Log;
+
+import com.github.jrejaud.values.Values;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +20,11 @@ public class SmartThingsModelManager {
     private SmartThingsModelManager() {
     }
 
-    private  List<Device> Devices = new ArrayList<>();
+    private List<Device> Devices = new ArrayList<>();
     private List<String> Phrases = new ArrayList<>();
 
     public List<Device> getDevices() {
         return Devices;
-    }
-
-    public void setDevices(List<Device> devices) {
-        this.Devices = devices;
     }
 
     public List<String> getPhrases() {
@@ -35,7 +35,16 @@ public class SmartThingsModelManager {
         this.Phrases = phrases;
     }
 
+    public void setDevices(List<Device> devices) { this.Devices = devices; }
 
+    public Device getDeviceByID(String id) {
+        for (Device device :Devices) {
+            if (device.getId().equals(id)) {
+                return device;
+            }
+        }
+        return null;
+    }
 
 
 }

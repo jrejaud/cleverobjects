@@ -1,4 +1,4 @@
-package com.example.jordan.wearsocket;
+package com.crejaud.jrejaud.wearsocket;
 
 import android.app.Activity;
 import android.content.Context;

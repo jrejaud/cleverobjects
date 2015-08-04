@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/menu_picker_color_circle"
+        android:layout_gravity="center"
+        android:src="@drawable/wl_circle"
+        android:layout_width="@dimen/menu_circle_diameter"
+        android:layout_height="@dimen/menu_circle_diameter"
+        android:layout_marginBottom="15dp"/>
+
+    <ImageView
+        android:id="@+id/menu_picker_icon"
+        android:layout_gravity="center"
+        android:src="@drawable/abc_ic_menu_share_mtrl_alpha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp" />
+
+    <TextView
+        android:id="@+id/menu_picker_name"
+        android:layout_gravity="center|bottom"
+        android:text="Menu Item"
+        android:textSize="@dimen/abc_text_size_menu_material"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"/>
+
+</FrameLayout>

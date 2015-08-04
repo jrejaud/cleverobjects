@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:orientation="vertical"
     tools:context=".WatchActivity" tools:deviceIds="wear_square">
 
-    <GridView
-        android:id="@+id/clever_objects_gridview"
-        style="@style/CleverObjectsGrid" />
+    <!--<android.support.wearable.view.WearableListView-->
+        <!--android:id="@+id/actions_list_view"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
 
-</LinearLayout>
+    <android.support.wearable.view.GridViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main_menu_grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>

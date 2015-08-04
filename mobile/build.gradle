@@ -24,11 +24,11 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.example.jordan.retrofittest"
+        applicationId "com.crejaud.jrejaud.cleverwatch"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 25
+        versionName "2.0.5"
     }
     buildTypes {
         release {
@@ -42,11 +42,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     wearApp project(':wear')
     compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.google.android.gms:play-services:7.0.0'
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'io.reactivex:rxandroid:0.24.0'
-    compile 'com.github.jrejaud:wear-socket:0.1.0'
+    compile 'com.github.jrejaud:wear-socket:0.1.2'
     compile project(':models')
 }

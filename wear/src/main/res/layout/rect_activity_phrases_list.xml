@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:orientation="vertical"
-    tools:context="com.example.jordan.retrofittest.PhrasesList" tools:deviceIds="wear_square">
+    tools:context="com.crejaud.jrejaud.cleverwatch.PhrasesActivity" tools:deviceIds="wear_square">
 
-    <ListView
+    <android.support.wearable.view.WearableListView
+        android:id="@+id/phrasesListView"
+        android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</LinearLayout>
+
+
+
+</RelativeLayout>
