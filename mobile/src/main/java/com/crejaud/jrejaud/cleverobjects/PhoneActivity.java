@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -17,9 +18,12 @@ import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
 import com.github.jrejaud.wear_socket.WearSocket;
 
+import java.util.Timer;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 
 public class PhoneActivity extends CleverObjectsActivity {
@@ -65,7 +69,11 @@ public class PhoneActivity extends CleverObjectsActivity {
 
     @Override
     protected void onDestroy() {
-        WearSocket.getInstance().disconnect();
+        try {
+            WearSocket.getInstance().disconnect();
+        } catch (RuntimeException runtimeException) {
+            Timber.d(runtimeException.toString());
+        }
         super.onDestroy();
     }
 

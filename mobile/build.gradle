@@ -30,8 +30,8 @@ android {
         applicationId "com.crejaud.jrejaud.cleverobjects"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 30
-        versionName "2.0.10"
+        versionCode 31
+        versionName "2.0.11"
     }
     buildTypes {
         release {
@@ -51,4 +51,5 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'io.reactivex:rxandroid:0.24.0'
     compile 'com.github.jrejaud:wear-socket:0.1.2'
+    compile 'com.jakewharton.timber:timber:4.1.0'
 }

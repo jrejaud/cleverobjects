@@ -13,6 +13,8 @@ import com.crejaud.jrejaud.cleverobjects.Authentication.AccessToken;
 import com.crejaud.jrejaud.cleverobjects.Authentication.EndPointURL;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 
+import timber.log.Timber;
+
 
 public class SmartthingsLoginActivity extends CleverObjectsActivity implements AccessCode.accessInterface, AccessToken.AccessTokenInterface, EndPointURL.endpointInterface {
 
@@ -30,6 +32,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
 
     private void startLoginProcess() {
         //todo need to find a better way to obs this
+        Timber.d("Starting login process");
         ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientIDKey,"3439c1e4-73a6-4db3-a78c-af2098f585fd");
         ModelAndKeyStorage.getInstance().storeData(context,ModelAndKeyStorage.clientSecretKey,"8633a1ae-98ad-4c0f-8f44-0faccfa13cf4");
 
@@ -38,6 +41,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
 
     @Override
     public void foundAccessCode(String accessCode) {
+        Timber.d("Found access code!");
         Toast.makeText(context,"Loading...",Toast.LENGTH_SHORT).show();
         loginWebView.setVisibility(View.INVISIBLE);
         new AccessToken(context,accessCode).execute();
