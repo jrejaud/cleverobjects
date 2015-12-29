@@ -1,4 +1,4 @@
-package com.crejaud.jrejaud.cleverobjects;
+package com.crejaud.jrejaud.cleverobjects.Wear;
 
 import android.content.Context;
 import android.util.Log;

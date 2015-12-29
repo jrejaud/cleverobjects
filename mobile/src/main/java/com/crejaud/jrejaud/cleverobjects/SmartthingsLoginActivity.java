@@ -3,6 +3,7 @@ package com.crejaud.jrejaud.cleverobjects;
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -13,7 +14,7 @@ import com.crejaud.jrejaud.cleverobjects.Authentication.EndPointURL;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 
 
-public class SmartthingsLogin extends ActionBarActivity implements AccessCode.accessInterface, AccessToken.AccessTokenInterface, EndPointURL.endpointInterface {
+public class SmartthingsLoginActivity extends CleverObjectsActivity implements AccessCode.accessInterface, AccessToken.AccessTokenInterface, EndPointURL.endpointInterface {
 
     private Context context;
     private WebView loginWebView;

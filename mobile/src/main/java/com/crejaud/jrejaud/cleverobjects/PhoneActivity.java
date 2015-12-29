@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,7 +22,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PhoneActivity extends ActionBarActivity {
+public class PhoneActivity extends CleverObjectsActivity {
 
     private Context context;
     private TextView middleText;
@@ -48,7 +51,8 @@ public class PhoneActivity extends ActionBarActivity {
         }
 
     }
-//
+
+    //
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
@@ -70,7 +74,7 @@ public class PhoneActivity extends ActionBarActivity {
         wearSocket.setupAndConnect(context,Values.WEAR_CAPABILITY);
     }
 
-    private void updateModelAndPhrases(Context context) {
+    private void updateModelAndPhrases(final Context context) {
         //Update Device Model
         SmartThings.getInstance().setup(context); //Need to set this up before you can do anything fancy
         SmartThings.getInstance().getDevices(new Callback() {
@@ -102,7 +106,7 @@ public class PhoneActivity extends ActionBarActivity {
     }
 
     private void launchSmartThingsLogin() {
-        Intent smartThingsLoginIntent = new Intent(this,SmartthingsLogin.class);
+        Intent smartThingsLoginIntent = new Intent(this,SmartthingsLoginActivity.class);
         startActivity(smartThingsLoginIntent);
     }
 
