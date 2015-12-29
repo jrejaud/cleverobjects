@@ -6,5 +6,5 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     app:rectLayout="@layout/rect_activity_phrases_list"
     app:roundLayout="@layout/round_activity_phrases_list"
-    tools:context="com.crejaud.jrejaud.cleverwatch.PhrasesActivity"
+    tools:context="com.crejaud.jrejaud.cleverobjects.PhrasesActivity"
     tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.crejaud.jrejaud.cleverwatch.phrases.PhraseListItemLayout
+<com.crejaud.jrejaud.cleverobjects.phrases.PhraseListItemLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center_vertical"
     android:layout_width="match_parent"
@@ -9,4 +9,4 @@
         android:id="@+id/name"
         style="@style/phrases_wear_list_item" />
 
-</com.crejaud.jrejaud.cleverwatch.phrases.PhraseListItemLayout>
+</com.crejaud.jrejaud.cleverobjects.phrases.PhraseListItemLayout>

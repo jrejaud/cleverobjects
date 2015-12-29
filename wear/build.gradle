@@ -24,11 +24,11 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.crejaud.jrejaud.cleverwatch"
+        applicationId "com.crejaud.jrejaud.cleverobjects"
         minSdkVersion 20
         targetSdkVersion 22
-        versionCode 25
-        versionName "2.0.5"
+        versionCode 30
+        versionName "2.0.10"
     }
     buildTypes {
         release {
