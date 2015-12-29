@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/setup_message"
-        android:text="@string/setup_message" android:layout_width="wrap_content"
+        android:text="@string/setup_message_1" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_centerInParent="true" />
