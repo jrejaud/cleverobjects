@@ -33,8 +33,10 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
     private void startLoginProcess() {
         //todo need to find a better way to obs this
         Timber.d("Starting login process");
-        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientIDKey,"3439c1e4-73a6-4db3-a78c-af2098f585fd");
-        ModelAndKeyStorage.getInstance().storeData(context,ModelAndKeyStorage.clientSecretKey,"8633a1ae-98ad-4c0f-8f44-0faccfa13cf4");
+        //Old client ID "3439c1e4-73a6-4db3-a78c-af2098f585fd"
+        //Old client secret "8633a1ae-98ad-4c0f-8f44-0faccfa13cf4"
+        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientIDKey,"6359b0db-6481-44b8-b68f-68012818fa7a");
+        ModelAndKeyStorage.getInstance().storeData(context,ModelAndKeyStorage.clientSecretKey,"601f1221-28ec-451a-92e2-3b87fec0a2bc");
 
         new AccessCode(this,loginWebView).getAccessCode();
     }

@@ -28,8 +28,8 @@ android {
         applicationId "com.crejaud.jrejaud.cleverobjects"
         minSdkVersion 20
         targetSdkVersion 22
-        versionCode 31
-        versionName "2.0.11"
+        versionCode 32
+        versionName "2.0.12"
     }
     buildTypes {
         release {
