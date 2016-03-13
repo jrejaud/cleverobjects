@@ -17,6 +17,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import rx.Observable;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.functions.Func2;
 
 /**
  * Created by Jordan on 6/14/2015.
@@ -41,21 +44,46 @@ public class SmartThings {
         smartThingsService = SmartThingsRESTHandler.getInstance().getSmartThingsService(context);
     }
 
-    public void getDevices(Callback callback) {
+    public void getDevices(final Callback callback) {
         if (smartThingsService==null) {
             Toast.makeText(context,"Please login to SmartThings",Toast.LENGTH_SHORT).show();
             return;
         }
-        Observable.combineLatest(smartThingsService.getSwitchesObservable(), smartThingsService.getLocksObservable(),
-                (switches, locks) -> {
+        Observable.combineLatest(smartThingsService.getSwitchesObservable(), smartThingsService.getLocksObservable(), new Func2<List<Device>, List<Device>, List<Device>>() {
+            @Override
+            public List<Device> call(List<Device> switches, List<Device> locks) {
                 List<Device> devices = new ArrayList<>();
                 devices.addAll(switches);
                 devices.addAll(locks);
                 return devices;
-            })
-                .doOnError(throwable -> { Log.e(TAG, String.valueOf(throwable)); })
-                .doOnCompleted(() -> callback.success(null, null))
-                .subscribe(st_devices -> SmartThingsModelManager.getInstance().setDevices(st_devices));
+            }
+        }).doOnError(new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                Log.d(TAG,throwable.toString());
+            }
+        }).doOnCompleted(new Action0() {
+            @Override
+            public void call() {
+                callback.success(null,null);
+            }
+        }).subscribe(new Action1<List<Device>>() {
+            @Override
+            public void call(List<Device> devices) {
+                SmartThingsModelManager.getInstance().setDevices(devices);
+            }
+        });
+
+//        Observable.combineLatest(smartThingsService.getSwitchesObservable(), smartThingsService.getLocksObservable(),
+//                (switches, locks) -> {
+//                List<Device> devices = new ArrayList<>();
+//                devices.addAll(switches);
+//                devices.addAll(locks);
+//                return devices;
+//            })
+//                .doOnError(throwable -> { Log.e(TAG, String.valueOf(throwable)); })
+//                .doOnCompleted(() -> callback.success(null, null))
+//                .subscribe(st_devices -> SmartThingsModelManager.getInstance().setDevices(st_devices));
 
     }
 

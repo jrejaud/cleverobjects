@@ -6,8 +6,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.github.jrejaud.storage.ModelAndKeyStorage;
-
 import rx.Observable;
 import rx.Subscriber;
 
@@ -19,7 +17,7 @@ public class ObservableAccessCode {
     private Context context;
     private final String codeURLStart = "https://graph.api.smartthings.com/oauth/callback?code=";
 
-    public Observable<String> getAccessCode(Context context, WebView webView) {
+    public Observable<String> getAccessCode(Context context, final WebView webView) {
         this.context = context;
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -32,10 +30,10 @@ public class ObservableAccessCode {
     }
 
     private String getAccessCodeUri() {
-        return "https://graph.api.smartthings.com/oauth/authorize?response_type=code&client_id="+ ModelAndKeyStorage.getInstance().getData(context,ModelAndKeyStorage.clientIDKey)+"&scope=app&redirect_uri=https%3A%2F%2Fgraph.api.smartthings.com%2Foauth%2Fcallback";
+        return "https://graph.api.smartthings.com/oauth/authorize?response_type=code&client_id="+ com.github.jrejaud.storage.ModelAndKeyStorage.getInstance().getData(context, com.github.jrejaud.storage.ModelAndKeyStorage.clientIDKey)+"&scope=app&redirect_uri=https%3A%2F%2Fgraph.api.smartthings.com%2Foauth%2Fcallback";
     }
 
-    private void loadWebView(String accessURI, WebView logInWebView, Subscriber subscriber) {
+    private void loadWebView(String accessURI, WebView logInWebView, final Subscriber subscriber) {
         WebSettings webSettings = logInWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         logInWebView.setWebViewClient(new WebViewClient() {

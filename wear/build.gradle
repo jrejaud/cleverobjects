@@ -1,22 +1,22 @@
 apply plugin: 'com.android.application'
 
-//Following is needed to get Retrolambda to work:
-apply plugin: 'me.tatarka.retrolambda'
+////Following is needed to get Retrolambda to work:
+//apply plugin: 'me.tatarka.retrolambda'
 
 buildscript {
     repositories {
         mavenCentral()
     }
 
-    dependencies {
-        classpath 'me.tatarka:gradle-retrolambda:3.1.0'
-    }
+//    dependencies {
+//        classpath 'me.tatarka:gradle-retrolambda:3.1.0'
+//    }
 }
 
 // Required because retrolambda is on maven central
-repositories {
-    mavenCentral()
-}
+//repositories {
+//    mavenCentral()
+//}
 //Done with Retrolambda changes to gradle
 
 android {
@@ -44,7 +44,8 @@ dependencies {
     compile 'com.google.android.support:wearable:1.1.0'
     compile 'com.google.android.gms:play-services-wearable:7.5.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'io.reactivex:rxandroid:0.24.0'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.0'
     compile 'com.github.jrejaud:wear-socket:0.1.2'
     compile project(':models')
 }
