@@ -1,9 +1,7 @@
 package com.crejaud.jrejaud.cleverobjects;
 
 import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -11,7 +9,7 @@ import android.widget.Toast;
 import com.crejaud.jrejaud.cleverobjects.Authentication.AccessCode;
 import com.crejaud.jrejaud.cleverobjects.Authentication.AccessToken;
 import com.crejaud.jrejaud.cleverobjects.Authentication.EndPointURL;
-import com.github.jrejaud.Storage.ModelAndKeyStorage;
+import com.github.jrejaud.storage.ModelAndKeyStorage;
 
 import timber.log.Timber;
 

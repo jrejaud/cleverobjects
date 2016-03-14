@@ -1,16 +1,13 @@
-package com.github.jrejaud.Storage;
+package com.github.jrejaud.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.github.jrejaud.models.Device;
-import com.github.jrejaud.values.Values;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

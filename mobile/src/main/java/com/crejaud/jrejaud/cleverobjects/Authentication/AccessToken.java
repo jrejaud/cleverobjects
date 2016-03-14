@@ -6,13 +6,11 @@ import android.os.AsyncTask;
 import android.os.StrictMode;
 
 
-import com.github.jrejaud.Storage.ModelAndKeyStorage;
+import com.github.jrejaud.storage.ModelAndKeyStorage;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
