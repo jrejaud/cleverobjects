@@ -5,7 +5,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 
-import com.github.jrejaud.storage.ModelAndKeyStorage;
+
+import com.github.jrejaud.Storage.ModelAndKeyStorage;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.UsernamePasswordCredentials;

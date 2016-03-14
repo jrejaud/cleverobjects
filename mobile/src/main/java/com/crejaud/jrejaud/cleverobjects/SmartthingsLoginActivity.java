@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.crejaud.jrejaud.cleverobjects.Authentication.AccessCode;
 import com.crejaud.jrejaud.cleverobjects.Authentication.AccessToken;
 import com.crejaud.jrejaud.cleverobjects.Authentication.EndPointURL;
-import com.github.jrejaud.storage.ModelAndKeyStorage;
+import com.github.jrejaud.Storage.ModelAndKeyStorage;
 
 import timber.log.Timber;
 
@@ -35,8 +35,8 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
         Timber.d("Starting login process");
         //Old client ID "3439c1e4-73a6-4db3-a78c-af2098f585fd"
         //Old client secret "8633a1ae-98ad-4c0f-8f44-0faccfa13cf4"
-        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientIDKey,"6359b0db-6481-44b8-b68f-68012818fa7a");
-        ModelAndKeyStorage.getInstance().storeData(context,ModelAndKeyStorage.clientSecretKey,"601f1221-28ec-451a-92e2-3b87fec0a2bc");
+        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientIDKey,"162a3536-b3e8-4bb7-a5df-212a9187ba30");
+        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientSecretKey,"c5e9c060-5259-4b2b-ac63-48fa465bb74b");
 
         new AccessCode(this,loginWebView).getAccessCode();
     }

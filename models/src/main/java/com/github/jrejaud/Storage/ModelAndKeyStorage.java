@@ -1,4 +1,4 @@
-package com.github.jrejaud.storage;
+package com.github.jrejaud.Storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
