@@ -6,3 +6,5 @@
 /build
 /captures
 mobile/wear-release.apk
+mobile-release.apk
+*.apk
