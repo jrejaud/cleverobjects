@@ -1,8 +1,11 @@
 package com.crejaud.jrejaud.cleverobjects;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -70,9 +73,28 @@ public class PhoneActivity extends CleverObjectsActivity {
         super.onDestroy();
     }
 
-    private void setupWearSocket(Context context) {
+    private void setupWearSocket(final Context context) {
         WearSocket wearSocket = WearSocket.getInstance();
-        wearSocket.setupAndConnect(context,Values.WEAR_CAPABILITY);
+        wearSocket.setupAndConnect(context, Values.WEAR_CAPABILITY, new WearSocket.onErrorListener() {
+            @Override
+            public void onError(Throwable throwable) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("You need to have an Android Wear Device paired to your phone to use CleverObjects");
+                        builder.setCancelable(false);
+                        builder.setPositiveButton("Ok, close app", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        });
+                        builder.create().show();
+                    }
+                });
+            }
+        });
     }
 
     private void updateModelAndPhrases(final Context context) {

@@ -1,9 +1,12 @@
 package com.crejaud.jrejaud.cleverobjects;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
@@ -52,7 +55,18 @@ public class WatchActivity extends Activity {
 
     private void setupWearSocket() {
         WearSocket wearSocket = WearSocket.getInstance();
-        wearSocket.setupAndConnect(context, Values.WEAR_CAPABILITY);
+        wearSocket.setupAndConnect(context, Values.WEAR_CAPABILITY, new WearSocket.onErrorListener() {
+            @Override
+            public void onError(Throwable throwable) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context,"You need to have a phone paired to use CleverObjects",Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+            }
+        });
 //        wearSocket.startMessageListener(context, Values.MESSAGE_PATH);
 //        wearSocket.startDataListener(context, Values.DATA_PATH);
 //        wearSocket.setKeyDataType(Values.MODEL_KEY, new TypeToken<List<Device>>() {
