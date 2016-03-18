@@ -40,6 +40,9 @@
             android:name=".CleverObjectsActivity"
             android:label="@string/title_activity_clever_objects"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="4679301658829fcedb76afc15450b6e6855d7c77" />
     </application>
 
 </manifest>
