@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
 import android.support.wearable.view.WearableListView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.crejaud.jrejaud.cleverobjects.devices.DevicesGridAdapter;
@@ -23,7 +24,6 @@ import com.github.jrejaud.wear_socket.WearSocket;
 public class WatchActivity extends Activity {
 
     public static Context context;
-    private WearableListView listView;
     private GridViewPager gridViewPager;
 
     @Override
@@ -35,10 +35,7 @@ public class WatchActivity extends Activity {
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                //todo wtf, figure out why this shit is breaking
                 setupWearSocket();
-
-                retrieveModel();
 
                 setupUIElements();
 
@@ -48,8 +45,19 @@ public class WatchActivity extends Activity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        //Update it every time the user looks at the app again (regardless of if they destroy or stop the app)
+        retrieveModel();
+    }
+
+    @Override
     protected void onDestroy() {
-        WearSocket.getInstance().disconnect();
+        try {
+            WearSocket.getInstance().disconnect();
+        } catch (NullPointerException ex) {
+            Log.e("TAG","GoogleAPIClient must not be null, random bug",ex);
+        }
         super.onDestroy();
     }
 
@@ -67,10 +75,6 @@ public class WatchActivity extends Activity {
                 });
             }
         });
-//        wearSocket.startMessageListener(context, Values.MESSAGE_PATH);
-//        wearSocket.startDataListener(context, Values.DATA_PATH);
-//        wearSocket.setKeyDataType(Values.MODEL_KEY, new TypeToken<List<Device>>() {
-//        }.getType());
     }
 
     private void retrieveModel() {
@@ -79,6 +83,7 @@ public class WatchActivity extends Activity {
             SmartThingsModelManager.getInstance().setDevices(ModelAndKeyStorage.getInstance().getStoredDevices(context));
             modelEmpty = false;
         }
+        //This is test model
         //else {
 //            List<Device> fakeList = new ArrayList<>();
 //            Device fakeLock = new Device();
@@ -97,6 +102,7 @@ public class WatchActivity extends Activity {
             SmartThingsModelManager.getInstance().setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
             modelEmpty = false;
         }
+        //This is test phrases
 //        else {
 //            //Set up phrases
 //            List<String> phrases = new ArrayList<>();

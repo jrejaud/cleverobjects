@@ -44,6 +44,7 @@ public class PhoneActivity extends CleverObjectsActivity {
             }
         });
 
+        //Checks if user already set an endpoint URI
         if (hasUserAlreadySetUpSmartThings()) {
             middleText.setText("SmartThings is paired and CleverObjects is ready on your watch");
             setupWearSocket(this);
