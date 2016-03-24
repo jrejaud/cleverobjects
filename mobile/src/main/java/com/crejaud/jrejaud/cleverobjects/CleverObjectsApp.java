@@ -14,9 +14,11 @@ public class CleverObjectsApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
+        } else {
+            //Not debug
+            Fabric.with(this, new Crashlytics());
         }
     }
 }

@@ -80,16 +80,10 @@ public class PhoneListener extends WearableListenerService {
 
     public void dataChanged(String key, Object data) {
         Log.d(Values.TAG, "Main data change method reached");
+
         //Use the key to determine how to cast the bloody object
-
-        if (WatchActivity.context==null) {
-            startActivity(new Intent(getApplicationContext(),WatchActivity.class));
-        }
-
-
         if (key.equals(Values.MODEL_KEY)) {
             ArrayList<Device> deviceArrayList = (ArrayList<Device>) data;
-            SmartThingsModelManager.getInstance().setDevices(deviceArrayList);
             ModelAndKeyStorage.getInstance().storeDevices(getApplicationContext(), SmartThingsModelManager.getInstance().getDevices());
             for (Device device: deviceArrayList) {
                 Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
@@ -100,10 +94,14 @@ public class PhoneListener extends WearableListenerService {
             for (String phrase : phrases) {
                 Log.d(Values.TAG,"Received new phrase: "+phrase);
             }
-            SmartThingsModelManager.getInstance().setPhrases(phrases);
             ModelAndKeyStorage.getInstance().storePhrases(context, SmartThingsModelManager.getInstance().getPhrases());
         }
 
+        //Then reset the app!
+        Intent intent = new Intent(getBaseContext(),WatchActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
     }
 
 }

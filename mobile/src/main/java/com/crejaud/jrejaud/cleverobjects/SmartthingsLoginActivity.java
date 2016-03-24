@@ -1,6 +1,9 @@
 package com.crejaud.jrejaud.cleverobjects;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
@@ -18,6 +21,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
 
     private Context context;
     private WebView loginWebView;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +33,6 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
     }
 
     private void startLoginProcess() {
-        //todo need to find a better way to obs this
         Timber.d("Starting login process");
         //Old client ID "3439c1e4-73a6-4db3-a78c-af2098f585fd"
         //Old client secret "8633a1ae-98ad-4c0f-8f44-0faccfa13cf4"
@@ -41,8 +44,13 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
 
     @Override
     public void foundAccessCode(String accessCode) {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Setting up CleverObjects");
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
         Timber.d("Found access code!");
-        Toast.makeText(context,"Loading...",Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
         loginWebView.setVisibility(View.INVISIBLE);
         new AccessToken(context,accessCode).execute();
     }
@@ -50,9 +58,8 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
     @Override
     public void foundAccessToken(String accessToken) {
         if (accessToken==null) {
-            //todo connection error
-            Toast.makeText(context,"Connection error :(",Toast.LENGTH_SHORT).show();
-            finish();
+            progressDialog.hide();
+            showErrorMessage();
             return;
         }
         ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.authTokenKey, accessToken);
@@ -62,12 +69,36 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
     @Override
     public void foundEndPoint(String url) {
         if (url==null) {
-            //todo connection error
-            Toast.makeText(context,"Connection error :(",Toast.LENGTH_SHORT).show();
-            finish();
+            progressDialog.hide();
+            showErrorMessage();
             return;
         }
         ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.endpointURIKey, url);
-        finish();
+        progressDialog.hide();
+        showCompletedAlertDialog();
+    }
+
+    private void showErrorMessage() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setMessage("Error setting up CleverObjects, please try again");
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        alertDialogBuilder.create().show();
+    }
+
+    private void showCompletedAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setMessage("Successfully set up CleverObjects, load the app up on your watch and try it out.");
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        alertDialogBuilder.create().show();
     }
 }
