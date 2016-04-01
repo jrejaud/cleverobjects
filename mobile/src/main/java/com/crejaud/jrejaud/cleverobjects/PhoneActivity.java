@@ -1,5 +1,6 @@
 package com.crejaud.jrejaud.cleverobjects;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
@@ -27,6 +30,8 @@ public class PhoneActivity extends CleverObjectsActivity {
     private Context context;
     private TextView middleText;
     private Button setupButton;
+    private Button unpairButton;
+    private FrameLayout mainImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,9 @@ public class PhoneActivity extends CleverObjectsActivity {
         setContentView(R.layout.activity_phone);
         middleText = (TextView) findViewById(R.id.setup_message);
         setupButton = (Button) findViewById(R.id.smartthings_login_button);
+        unpairButton = (Button) findViewById(R.id.smartthings_unpair_button);
+
+        mainImage = (FrameLayout) findViewById(R.id.main_image);
 
         setupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,25 +52,37 @@ public class PhoneActivity extends CleverObjectsActivity {
             }
         });
 
-        //Checks if user already set an endpoint URI
-        if (hasUserAlreadySetUpSmartThings()) {
-            middleText.setText("SmartThings is paired and CleverObjects is ready on your watch");
-            setupWearSocket(this);
-            updateModelAndPhrases(this);
-        }
+        unpairButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteAuthToken();
+                restartApp();
+            }
+        });
 
     }
 
-    //
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (hasUserAlreadySetUpSmartThings()) {
-//            middleText.setText("SmartThings is paired and CleverObjects is ready on your watch");
-//            setupWearSocket();
-//            updateModelAndPhrases();
-//        }
-//    }
+    private void restartApp() {
+        Intent intent = new Intent(this,PhoneActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //Checks if user already set an endpoint URI
+        if (hasUserAlreadySetUpSmartThings()) {
+            middleText.setText(getString(R.string.paired_message));
+            setupButton.setText(getString(R.string.repair_smartthings));
+            unpairButton.setVisibility(View.VISIBLE);
+            mainImage.setVisibility(View.VISIBLE);
+            setupWearSocket(this);
+            updateModelAndPhrases(this);
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -75,11 +95,15 @@ public class PhoneActivity extends CleverObjectsActivity {
     }
 
     private void setupWearSocket(final Context context) {
+        //If this is a flavor which uses no watch, ignore this step
+        if (BuildConfig.FLAVOR.contains("noWatch")) {
+            return;
+        }
         WearSocket wearSocket = WearSocket.getInstance();
         wearSocket.setupAndConnect(context, Values.WEAR_CAPABILITY, new WearSocket.onErrorListener() {
             @Override
             public void onError(Throwable throwable) {
-                new Handler().post(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -105,6 +129,9 @@ public class PhoneActivity extends CleverObjectsActivity {
             @Override
             public void success(Object o, Response response) {
                 ModelAndKeyStorage.getInstance().storeDevices(context,SmartThingsModelManager.getInstance().getDevices());
+                if (BuildConfig.FLAVOR.contains("noWatch")) {
+                    return;
+                }
                 WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, SmartThingsModelManager.getInstance().getDevices());
             }
 
@@ -119,6 +146,9 @@ public class PhoneActivity extends CleverObjectsActivity {
             @Override
             public void success(Object o, Response response) {
                 ModelAndKeyStorage.getInstance().storePhrases(context, SmartThingsModelManager.getInstance().getPhrases());
+                if (BuildConfig.FLAVOR.contains("noWatch")) {
+                    return;
+                }
                 WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.PHRASES_KEY, SmartThingsModelManager.getInstance().getPhrases());
             }
 
@@ -139,6 +169,16 @@ public class PhoneActivity extends CleverObjectsActivity {
             return false;
         }
         return true;
+    }
+
+    /** Removes the auth token stored on the mobile app and sends a message to the wear app telling it to kill its tokens */
+    private void deleteAuthToken() {
+        ModelAndKeyStorage.getInstance().storeData(context,ModelAndKeyStorage.authTokenKey,null);
+        if (BuildConfig.FLAVOR.contains("noWatch")) {
+            return;
+        }
+        WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, null);
+        WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.PHRASES_KEY, null);
     }
 }
 

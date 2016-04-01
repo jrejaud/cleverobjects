@@ -50,7 +50,6 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
         progressDialog.setIndeterminate(true);
         progressDialog.show();
         Timber.d("Found access code!");
-        Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
         loginWebView.setVisibility(View.INVISIBLE);
         new AccessToken(context,accessCode).execute();
     }
@@ -80,6 +79,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
 
     private void showErrorMessage() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("Error");
         alertDialogBuilder.setMessage("Error setting up CleverObjects, please try again");
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
@@ -92,6 +92,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
 
     private void showCompletedAlertDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("Success");
         alertDialogBuilder.setMessage("Successfully set up CleverObjects, load the app up on your watch and try it out.");
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override

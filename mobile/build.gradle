@@ -37,6 +37,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        noWatch {
+
+        }
+        prod {
+
+        }
+    }
 }
 
 dependencies {
