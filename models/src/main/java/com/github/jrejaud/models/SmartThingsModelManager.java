@@ -38,6 +38,10 @@ public class SmartThingsModelManager {
     public void setDevices(List<Device> devices) { this.Devices = devices; }
 
     public Device getDeviceByID(String id) {
+        //If there are no devices, it means that there is no auth key saved on the phone.
+        if (Devices==null) {
+            return null;
+        }
         for (Device device :Devices) {
             if (device.getId().equals(id)) {
                 return device;
