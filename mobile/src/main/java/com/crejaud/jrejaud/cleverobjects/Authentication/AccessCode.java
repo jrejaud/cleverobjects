@@ -17,6 +17,7 @@ public class AccessCode {
     private Context context;
     private WebView logInWebView;
     public accessInterface accessINT;
+    private WebsiteLoadedInterface websiteLoadedInterface;
 
     public interface accessInterface {
         void foundAccessCode(String accessCode);
@@ -24,6 +25,7 @@ public class AccessCode {
 
     public AccessCode(Context context, WebView logInWebView) {
         this.context = context;
+        this.websiteLoadedInterface = (WebsiteLoadedInterface) context;
         this.logInWebView = logInWebView;
         accessINT = (accessInterface) context;
     }
@@ -72,6 +74,7 @@ public class AccessCode {
         logInWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                websiteLoadedInterface.websiteLoaded();
                 super.onPageStarted(view, url, favicon);
                 if (url.startsWith(codeURLStart)) {
                     //Toast.makeText(context,"URL: "+url,Toast.LENGTH_SHORT);
@@ -85,6 +88,10 @@ public class AccessCode {
         });
         //https://graph.api.smartthings.com/oauth/confirm_access?response_type=code&scope=app&redirect_uri=https%3A%2F%2Fgraph.api.smartthings.com%2Foauth%2Fcallback&client_id=3439c1e4-73a6-4db3-a78c-af2098f585fd
         logInWebView.loadUrl(accessURL);
+    }
+
+    public interface WebsiteLoadedInterface {
+        void websiteLoaded();
     }
 
 }

@@ -16,4 +16,8 @@ public class Values {
     public static final HashMap<String,Type> DATA_KEYS = new HashMap<>();
 
     public static final String WEAR_CAPABILITY = "clever_objects";
+
+    //Send this message when you want the wear app to delete its local keys
+    public static final String DELETE_KEY = "CleverObjects_Delete";
+
 }

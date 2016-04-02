@@ -17,10 +17,11 @@ import com.github.jrejaud.storage.ModelAndKeyStorage;
 import timber.log.Timber;
 
 
-public class SmartthingsLoginActivity extends CleverObjectsActivity implements AccessCode.accessInterface, AccessToken.AccessTokenInterface, EndPointURL.endpointInterface {
+public class SmartthingsLoginActivity extends CleverObjectsActivity implements AccessCode.accessInterface, AccessToken.AccessTokenInterface, EndPointURL.endpointInterface, AccessCode.WebsiteLoadedInterface {
 
     private Context context;
     private WebView loginWebView;
+    private ProgressDialog websiteLoadingDialog;
     private ProgressDialog progressDialog;
 
     @Override
@@ -29,7 +30,19 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
         setContentView(R.layout.activity_smartthings_login);
         context = this;
         loginWebView = (WebView) findViewById(R.id.smartthings_login_webview);
+        websiteLoadingDialog = new ProgressDialog(context);
+        websiteLoadingDialog.setCancelable(false);
+        websiteLoadingDialog.setMessage("Loading SmartThings website");
+        websiteLoadingDialog.setIndeterminate(true);
+        websiteLoadingDialog.show();
         startLoginProcess();
+    }
+
+    @Override
+    public void websiteLoaded() {
+        if (websiteLoadingDialog.isShowing()) {
+            websiteLoadingDialog.hide();
+        }
     }
 
     private void startLoginProcess() {
@@ -74,7 +87,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
         }
         ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.endpointURIKey, url);
         progressDialog.hide();
-        showCompletedAlertDialog();
+        finish();
     }
 
     private void showErrorMessage() {
@@ -93,7 +106,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
     private void showCompletedAlertDialog() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Success");
-        alertDialogBuilder.setMessage("Successfully set up CleverObjects, load the app up on your watch and try it out.");
+        alertDialogBuilder.setMessage("Successfully paired CleverObjects");
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -102,4 +115,5 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
         });
         alertDialogBuilder.create().show();
     }
+
 }

@@ -35,6 +35,7 @@
     <Button
         android:id="@+id/smartthings_login_button"
         android:text="@string/pair_smartthings"
+        android:theme="@style/PairButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

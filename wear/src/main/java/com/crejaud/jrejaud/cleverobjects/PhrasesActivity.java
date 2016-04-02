@@ -31,7 +31,7 @@ public class PhrasesActivity extends Activity {
             public void onLayoutInflated(WatchViewStub stub) {
 
                 phrasesListView = (WearableListView) findViewById(R.id.phrasesListView);
-                phrasesListView.setAdapter(new PhrasesAdapter(context, SmartThingsModelManager.getInstance().getPhrases()));
+                phrasesListView.setAdapter(new PhrasesAdapter(context, SmartThingsModelManager.getPhrases()));
                 phrasesListView.setClickListener(new WearableListView.ClickListener() {
                     @Override
                     public void onClick(WearableListView.ViewHolder viewHolder) {

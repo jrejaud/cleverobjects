@@ -76,12 +76,12 @@ public class VoiceRecognition {
             //todo error, no state change in this command
             return;
         }
-        List<String> lowerCaseDeviceNames = deviceLabelsToLowerCase(SmartThingsModelManager.getInstance().getDevices());
+        List<String> lowerCaseDeviceNames = deviceLabelsToLowerCase(SmartThingsModelManager.getDevices());
         if (lowerCaseDeviceNames.contains(command)) {
             int index = lowerCaseDeviceNames.indexOf(command);
             DeviceStateChange deviceStateChange = new DeviceStateChange();
             deviceStateChange.updateDeviceState(index,action);
-            Toast.makeText(context, SmartThingsModelManager.getInstance().getDevices().get(index).getLabel()+" "+action, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, SmartThingsModelManager.getDevices().get(index).getLabel()+" "+action, Toast.LENGTH_SHORT).show();
 
         }
     }

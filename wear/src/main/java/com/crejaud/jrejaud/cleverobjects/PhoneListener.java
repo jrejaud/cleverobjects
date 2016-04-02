@@ -28,7 +28,6 @@ import java.util.Set;
  */
 public class PhoneListener extends WearableListenerService {
 
-    private Context context;
     private boolean hasBeenInitialized = false;
 
     public void initializeListener() {
@@ -41,11 +40,10 @@ public class PhoneListener extends WearableListenerService {
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if (!hasBeenInitialized) {initializeListener();}
-        context = getApplicationContext();
         String path = messageEvent.getPath();
-        Log.d(Values.TAG,"New onMessageReceived: "+path+" message:"+ new String(messageEvent.getData()));
+        Log.d(Values.TAG, "New onMessageReceived: " + path + " message:" + new String(messageEvent.getData()));
         if (path.equals(Values.MESSAGE_PATH)) {
-            messageReceived(path,new String(messageEvent.getData()));
+            messageReceived(path, new String(messageEvent.getData()));
         }
     }
 
@@ -73,9 +71,15 @@ public class PhoneListener extends WearableListenerService {
     }
 
     public void messageReceived(String path, String message) {
-        Log.d(Values.TAG, "Message: " + path + " " + message);
-        //For now, only messages will be error messages
-        Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+        //If this is a delete message, then wipe everything
+        if (message.equals(Values.DELETE_KEY)) {
+            ModelAndKeyStorage.getInstance().storeDevices(this,null);
+            ModelAndKeyStorage.getInstance().storePhrases(this, null);
+            restartApp();
+        } else {
+            //Else, just print the message
+            Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void dataChanged(String key, Object data) {
@@ -83,24 +87,38 @@ public class PhoneListener extends WearableListenerService {
 
         //Use the key to determine how to cast the bloody object
         if (key.equals(Values.MODEL_KEY)) {
-            ArrayList<Device> deviceArrayList = (ArrayList<Device>) data;
-            ModelAndKeyStorage.getInstance().storeDevices(getApplicationContext(), SmartThingsModelManager.getInstance().getDevices());
-            for (Device device: deviceArrayList) {
-                Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
+            if (data==null) {
+                //If data is null, then clear the locally stored key
+                ModelAndKeyStorage.getInstance().storeDevices(this, null);
+            } else {
+                ArrayList<Device> deviceArrayList = (ArrayList<Device>) data;
+                ModelAndKeyStorage.getInstance().storeDevices(this, deviceArrayList);
+                for (Device device: deviceArrayList) {
+                    Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
+                }
             }
         }
+
         if (key.equals(Values.PHRASES_KEY)) {
-            List<String> phrases = (ArrayList<String>) data;
-            for (String phrase : phrases) {
-                Log.d(Values.TAG,"Received new phrase: "+phrase);
+
+            //If data is null, then clear the locally stored key
+            if (data==null) {
+                ModelAndKeyStorage.getInstance().storePhrases(this, null);
+            } else {
+                List<String> phrases = (ArrayList<String>) data;
+                for (String phrase : phrases) {
+                    Log.d(Values.TAG,"Received new phrase: "+phrase);
+                }
+                ModelAndKeyStorage.getInstance().storePhrases(this, phrases);
             }
-            ModelAndKeyStorage.getInstance().storePhrases(context, SmartThingsModelManager.getInstance().getPhrases());
         }
 
-        //Then reset the app!
-        Intent intent = new Intent(getBaseContext(),WatchActivity.class);
+        restartApp();
+    }
+    private void restartApp() {
+        //Then restart the app
+        Intent intent = new Intent(this,WatchActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
         startActivity(intent);
     }
 

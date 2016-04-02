@@ -14,14 +14,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
+import com.github.jrejaud.models.Device;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.values.Values;
 import com.github.jrejaud.wear_socket.WearSocket;
 
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import rx.Subscriber;
 import timber.log.Timber;
 
 
@@ -56,7 +60,6 @@ public class PhoneActivity extends CleverObjectsActivity {
             @Override
             public void onClick(View v) {
                 deleteAuthToken();
-                restartApp();
             }
         });
 
@@ -123,38 +126,53 @@ public class PhoneActivity extends CleverObjectsActivity {
     }
 
     private void updateModelAndPhrases(final Context context) {
+
         //Update Device Model
         SmartThings.getInstance().setup(context); //Need to set this up before you can do anything fancy
-        SmartThings.getInstance().getDevices(new Callback() {
+        SmartThings.getInstance().getDevices(new Subscriber<List<Device>>() {
             @Override
-            public void success(Object o, Response response) {
-                ModelAndKeyStorage.getInstance().storeDevices(context,SmartThingsModelManager.getInstance().getDevices());
-                if (BuildConfig.FLAVOR.contains("noWatch")) {
-                    return;
-                }
-                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, SmartThingsModelManager.getInstance().getDevices());
+            public void onCompleted() {
+
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onError(Throwable e) {
+                throw new RuntimeException(e);
+            }
 
+            @Override
+            public void onNext(List<Device> devices) {
+                ModelAndKeyStorage.getInstance().storeDevices(context, devices);
+                if (BuildConfig.FLAVOR.contains("noWatch")) {
+                    return;
+                }
+                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, devices);
+                updatePhrases();
             }
         });
 
+    }
+
+    private void updatePhrases() {
         //Update Phrases
-        SmartThings.getInstance().getPhrases(new Callback() {
+        SmartThings.getInstance().getPhrases(new Subscriber<List<String>>() {
             @Override
-            public void success(Object o, Response response) {
-                ModelAndKeyStorage.getInstance().storePhrases(context, SmartThingsModelManager.getInstance().getPhrases());
-                if (BuildConfig.FLAVOR.contains("noWatch")) {
-                    return;
-                }
-                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.PHRASES_KEY, SmartThingsModelManager.getInstance().getPhrases());
+            public void onCompleted() {
+
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onError(Throwable e) {
+                throw new RuntimeException(e);
+            }
 
+            @Override
+            public void onNext(List<String> phrases) {
+                ModelAndKeyStorage.getInstance().storePhrases(context, phrases);
+                if (BuildConfig.FLAVOR.contains("noWatch")) {
+                    return;
+                }
+                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.PHRASES_KEY, phrases);
             }
         });
     }
@@ -173,12 +191,28 @@ public class PhoneActivity extends CleverObjectsActivity {
 
     /** Removes the auth token stored on the mobile app and sends a message to the wear app telling it to kill its tokens */
     private void deleteAuthToken() {
-        ModelAndKeyStorage.getInstance().storeData(context,ModelAndKeyStorage.authTokenKey,null);
-        if (BuildConfig.FLAVOR.contains("noWatch")) {
-            return;
-        }
-        WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, null);
-        WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.PHRASES_KEY, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("Unpair CleverObjects");
+        alertDialogBuilder.setMessage("Are you sure you want to unpair CleverObjects from SmartThings?");
+        alertDialogBuilder.setPositiveButton("Unpair", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.authTokenKey, null);
+                if (BuildConfig.FLAVOR.contains("noWatch")) {
+                    return;
+                }
+                WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, Values.DELETE_KEY);
+                restartApp();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //
+            }
+        });
+        alertDialogBuilder.create().show();
     }
 }
 

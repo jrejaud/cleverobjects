@@ -17,7 +17,7 @@ public class DeviceStateChange {
         JSONObject message = new JSONObject();
         try {
             message.put(DeviceStateChangeMessage.TYPE, DeviceStateChangeMessage.DEVICE_ID);
-            message.put(DeviceStateChangeMessage.DATA, SmartThingsModelManager.getInstance().getDevices().get(deviceNumber).getId());
+            message.put(DeviceStateChangeMessage.DATA, SmartThingsModelManager.getDevices().get(deviceNumber).getId());
             message.put(DeviceStateChangeMessage.ACTION, action);
             WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, message.toString());
         } catch (JSONException e) {

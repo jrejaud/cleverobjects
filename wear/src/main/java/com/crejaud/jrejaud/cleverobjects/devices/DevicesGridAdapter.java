@@ -125,7 +125,7 @@ public class DevicesGridAdapter extends GridPagerAdapter {
 
     private void startPhrasesActivity() {
         //Start Phrase List if there are any phrases
-        if (SmartThingsModelManager.getInstance().getPhrases().size()==0) {
+        if (SmartThingsModelManager.getPhrases().size()==0) {
             Toast.makeText(context,"You need to set up some phrases on SmartThings first",Toast.LENGTH_SHORT).show();
             return;
         }

@@ -11,33 +11,25 @@ import java.util.List;
  * Created by Jordan on 6/11/2015.
  */
 public class SmartThingsModelManager {
-    private static SmartThingsModelManager ourInstance = new SmartThingsModelManager();
 
-    public static SmartThingsModelManager getInstance() {
-        return ourInstance;
-    }
+    private static List<Device> Devices = new ArrayList<>();
+    private static List<String> Phrases = new ArrayList<>();
 
-    private SmartThingsModelManager() {
-    }
-
-    private List<Device> Devices = new ArrayList<>();
-    private List<String> Phrases = new ArrayList<>();
-
-    public List<Device> getDevices() {
+    public static List<Device> getDevices() {
         return Devices;
     }
 
-    public List<String> getPhrases() {
+    public static List<String> getPhrases() {
         return Phrases;
     }
 
-    public void setPhrases(List<String> phrases) {
-        this.Phrases = phrases;
+    public static void setPhrases(List<String> phrases) {
+        SmartThingsModelManager.Phrases = phrases;
     }
 
-    public void setDevices(List<Device> devices) { this.Devices = devices; }
+    public static void setDevices(List<Device> devices) { SmartThingsModelManager.Devices = devices; }
 
-    public Device getDeviceByID(String id) {
+    public static Device getDeviceByID(String id) {
         //If there are no devices, it means that there is no auth key saved on the phone.
         if (Devices==null) {
             return null;

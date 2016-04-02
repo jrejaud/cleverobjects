@@ -38,9 +38,14 @@ public class ModelAndKeyStorage {
 
     public void storeDevices(Context context, List<Device> devices) {
         setupSharedPreferences(context);
-        String jsonDevices = new Gson().toJson(devices);
-        sharedPreferencesEditor.putString(devicesKey,jsonDevices);
-        sharedPreferencesEditor.commit();
+        if (devices==null) {
+            sharedPreferencesEditor.remove(devicesKey);
+            sharedPreferencesEditor.commit();
+        } else {
+            String jsonDevices = new Gson().toJson(devices);
+            sharedPreferencesEditor.putString(devicesKey,jsonDevices);
+            sharedPreferencesEditor.commit();
+        }
     }
 
     public List<Device> getStoredDevices(Context context) {
@@ -73,9 +78,14 @@ public class ModelAndKeyStorage {
 
     public void storePhrases(Context context, List<String> phrases) {
         setupSharedPreferences(context);
-        Set<String> phrasesSet = new HashSet<>(phrases);
-        sharedPreferencesEditor.putStringSet(phrasesKey, phrasesSet);
-        sharedPreferencesEditor.commit();
+        if (phrases==null) {
+            sharedPreferencesEditor.remove(phrasesKey);
+            sharedPreferencesEditor.commit();
+        } else {
+            Set<String> phrasesSet = new HashSet<>(phrases);
+            sharedPreferencesEditor.putStringSet(phrasesKey, phrasesSet);
+            sharedPreferencesEditor.commit();
+        }
     }
 
     public void storeData(Context context, String key, String data) {

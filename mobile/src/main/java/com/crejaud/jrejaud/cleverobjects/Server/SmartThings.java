@@ -17,6 +17,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func2;
@@ -44,7 +45,8 @@ public class SmartThings {
         smartThingsService = SmartThingsRESTHandler.getInstance().getSmartThingsService(context);
     }
 
-    public void getDevices(final Callback callback) {
+    public void getDevices(final Subscriber<List<Device>> devicesSubscriber) {
+        //TODO Does this crap even need to be here?
         if (smartThingsService==null) {
             Toast.makeText(context,"Please login to SmartThings",Toast.LENGTH_SHORT).show();
             return;
@@ -60,43 +62,23 @@ public class SmartThings {
         }).doOnError(new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-                Log.d(TAG,throwable.toString());
+                devicesSubscriber.onError(throwable);
             }
         }).doOnCompleted(new Action0() {
             @Override
             public void call() {
-                callback.success(null,null);
+                //
             }
         }).subscribe(new Action1<List<Device>>() {
             @Override
             public void call(List<Device> devices) {
-                SmartThingsModelManager.getInstance().setDevices(devices);
+                devicesSubscriber.onNext(devices);
             }
         });
-
-//        Observable.combineLatest(smartThingsService.getSwitchesObservable(), smartThingsService.getLocksObservable(),
-//                (switches, locks) -> {
-//                List<Device> devices = new ArrayList<>();
-//                devices.addAll(switches);
-//                devices.addAll(locks);
-//                return devices;
-//            })
-//                .doOnError(throwable -> { Log.e(TAG, String.valueOf(throwable)); })
-//                .doOnCompleted(() -> callback.success(null, null))
-//                .subscribe(st_devices -> SmartThingsModelManager.getInstance().setDevices(st_devices));
-
     }
 
     public void setDeviceState(final Device device, final String command) {
 
-//        ModelAndKeyStorage modelAndKeyStorage = ModelAndKeyStorage.getInstance();
-//        final String authenticationToken = modelAndKeyStorage.getData(context,ModelAndKeyStorage.authTokenKey);
-//        String endpointURI = modelAndKeyStorage.getData(context,ModelAndKeyStorage.endpointURIKey);
-
-//        Log.d(TAG,"About to try to do something to device state...");
-//        Log.d(TAG,"Device to be set: "+device.getLabel()+", "+device.getId());
-//        Log.d(TAG,"Auth token: "+authenticationToken);
-//        Log.d(TAG,"endpoint URI: "+endpointURI);
 
         String typePath = getTypePath(device.getType());
         if (typePath==null) {
@@ -151,19 +133,18 @@ public class SmartThings {
         });
     }
 
-    public void getPhrases(final Callback callback) {
+    public void getPhrases(final Subscriber<List<String>> listSubscriber) {
         smartThingsService.getPhrases(new Callback<List<String>>() {
             @Override
             public void success(List<String> phrases, Response response) {
-                Log.d(TAG, "Phrases: " + String.valueOf(phrases));
-                SmartThingsModelManager.getInstance().setPhrases(phrases);
-                callback.success(null,null);
+                listSubscriber.onNext(phrases);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d(TAG, String.valueOf(error));
+                listSubscriber.onError(error);
             }
         });
     }
+
 }

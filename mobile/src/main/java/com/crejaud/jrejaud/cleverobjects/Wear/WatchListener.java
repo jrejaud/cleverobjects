@@ -49,8 +49,8 @@ public class WatchListener extends WearableListenerService {
 
     //Move this to another method...
     private void changeDeviceState(String id, String state) {
-        SmartThingsModelManager.getInstance().setDevices(ModelAndKeyStorage.getInstance().getStoredDevices(context));
-        Device device = SmartThingsModelManager.getInstance().getDeviceByID(id);
+        SmartThingsModelManager.setDevices(ModelAndKeyStorage.getInstance().getStoredDevices(context));
+        Device device = SmartThingsModelManager.getDeviceByID(id);
         if (device!=null) {
             Log.d(Values.TAG, "Setting " + device + " state to: " + state);
             SmartThings smartThings = SmartThings.getInstance();
@@ -60,8 +60,8 @@ public class WatchListener extends WearableListenerService {
     }
 
     private void sayPhrase(String phrase) {
-        SmartThingsModelManager.getInstance().setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
-        if (!SmartThingsModelManager.getInstance().getPhrases().contains(phrase)) {
+        SmartThingsModelManager.setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
+        if (!SmartThingsModelManager.getPhrases().contains(phrase)) {
             Log.e(Values.TAG,"Phrase is not contained in Model manager!");
             return;
         }
