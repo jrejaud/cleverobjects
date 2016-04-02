@@ -32,8 +32,6 @@ public class WatchActivity extends Activity {
         if (isModelEmpty()) {
             Log.d("TAG","model is empty!");
             promptUserToSetupOnPhoneFirst();
-        } else {
-            Log.d("TAG","model is not empty!");
         }
         setContentView(R.layout.activity_watch);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
@@ -63,7 +61,7 @@ public class WatchActivity extends Activity {
     protected void onDestroy() {
         try {
             WearSocket.getInstance().disconnect();
-        } catch (NullPointerException ex) {
+        } catch (Exception ex) {
             Log.e("TAG",ex.toString());
         }
         super.onDestroy();
@@ -102,11 +100,8 @@ public class WatchActivity extends Activity {
     }
 
     private boolean isModelEmpty() {
-        if (ModelAndKeyStorage.getInstance().getStoredDevices(context) == null && ModelAndKeyStorage.getInstance().getStoredPhrases(context) ==null) {
-            return true;
-        }
+        return ModelAndKeyStorage.getInstance().getStoredDevices(context) == null;
 
-        return false;
     }
 
     private void setupUIElements() {
@@ -116,7 +111,7 @@ public class WatchActivity extends Activity {
     }
 
     private void promptUserToSetupOnPhoneFirst() {
-        Toast.makeText(getBaseContext(),"Please set up CleverObjects on phone first",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"Please set up CleverObjects on phone first",Toast.LENGTH_SHORT).show();
         finish();
     }
 

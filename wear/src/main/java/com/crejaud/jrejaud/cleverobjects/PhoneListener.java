@@ -73,8 +73,8 @@ public class PhoneListener extends WearableListenerService {
     public void messageReceived(String path, String message) {
         //If this is a delete message, then wipe everything
         if (message.equals(Values.DELETE_KEY)) {
-            ModelAndKeyStorage.getInstance().storeDevices(this,null);
             ModelAndKeyStorage.getInstance().storePhrases(this, null);
+            ModelAndKeyStorage.getInstance().storeDevices(this, null);
             restartApp();
         } else {
             //Else, just print the message
@@ -97,6 +97,8 @@ public class PhoneListener extends WearableListenerService {
                     Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
                 }
             }
+
+            restartApp();
         }
 
         if (key.equals(Values.PHRASES_KEY)) {
@@ -112,8 +114,6 @@ public class PhoneListener extends WearableListenerService {
                 ModelAndKeyStorage.getInstance().storePhrases(this, phrases);
             }
         }
-
-        restartApp();
     }
     private void restartApp() {
         //Then restart the app

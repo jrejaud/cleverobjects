@@ -36,6 +36,8 @@ public class PhoneActivity extends CleverObjectsActivity {
     private Button setupButton;
     private Button unpairButton;
     private FrameLayout mainImage;
+    public static final String UPDATE_WEAR_APP = "UPDATE_WEAR_APP";
+    private boolean updatedThisSession = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,12 @@ public class PhoneActivity extends CleverObjectsActivity {
             }
         });
 
+        if (hasUserAlreadySetUpSmartThings()) {
+            middleText.setText(getString(R.string.paired_message));
+            setupButton.setText(getString(R.string.repair_smartthings));
+            unpairButton.setVisibility(View.VISIBLE);
+            mainImage.setVisibility(View.VISIBLE);
+        }
     }
 
     private void restartApp() {
@@ -76,14 +84,13 @@ public class PhoneActivity extends CleverObjectsActivity {
     protected void onResume() {
         super.onResume();
 
-        //Checks if user already set an endpoint URI
-        if (hasUserAlreadySetUpSmartThings()) {
-            middleText.setText(getString(R.string.paired_message));
-            setupButton.setText(getString(R.string.repair_smartthings));
-            unpairButton.setVisibility(View.VISIBLE);
-            mainImage.setVisibility(View.VISIBLE);
-            setupWearSocket(this);
-            updateModelAndPhrases(this);
+
+        if (getIntent().getBooleanExtra(UPDATE_WEAR_APP, false) && hasUserAlreadySetUpSmartThings()) {
+            if (!updatedThisSession) {
+                setupWearSocket(this);
+                updateModelAndPhrases(this);
+                updatedThisSession = true;
+            }
         }
     }
 

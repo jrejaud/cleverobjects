@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
@@ -87,7 +88,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
         }
         ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.endpointURIKey, url);
         progressDialog.hide();
-        finish();
+        restartApp();
     }
 
     private void showErrorMessage() {
@@ -114,6 +115,13 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
             }
         });
         alertDialogBuilder.create().show();
+    }
+
+    private void restartApp() {
+        Intent intent = new Intent(this,PhoneActivity.class);
+        intent.putExtra(PhoneActivity.UPDATE_WEAR_APP,true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
 }

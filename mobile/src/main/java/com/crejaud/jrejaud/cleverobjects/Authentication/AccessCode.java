@@ -3,6 +3,9 @@ package com.crejaud.jrejaud.cleverobjects.Authentication;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -27,7 +30,16 @@ public class AccessCode {
         this.context = context;
         this.websiteLoadedInterface = (WebsiteLoadedInterface) context;
         this.logInWebView = logInWebView;
+        clearWebViewHistory();
         accessINT = (accessInterface) context;
+    }
+
+    private void clearWebViewHistory() {
+        //Forget if user is already logged into SB (not sure which of these lines does it haha)
+        this.logInWebView.clearFormData();
+        this.logInWebView.getSettings().setSaveFormData(false);
+        this.logInWebView.getSettings().setSavePassword(false);
+        android.webkit.CookieManager.getInstance().removeAllCookie();
     }
 
     public void getAccessCode() {
