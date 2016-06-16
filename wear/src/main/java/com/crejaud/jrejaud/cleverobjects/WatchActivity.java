@@ -12,10 +12,15 @@ import android.widget.Toast;
 
 import com.crejaud.jrejaud.cleverobjects.devices.DevicesGridAdapter;
 import com.crejaud.jrejaud.cleverobjects.voicerecognition.VoiceRecognition;
+import com.github.jrejaud.models.Device;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.values.Values;
 import com.github.jrejaud.wear_socket.WearSocket;
+
+import java.util.List;
+
+import timber.log.Timber;
 
 
 public class WatchActivity extends Activity {
@@ -23,16 +28,31 @@ public class WatchActivity extends Activity {
     public static Context context;
     private GridViewPager gridViewPager;
     private DevicesGridAdapter devicesGridAdapter;
+    public static final String STOP_APP = "STOP_APP";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("TAG","onCreate");
         super.onCreate(savedInstanceState);
-        context = this;
-        if (isModelEmpty()) {
-            Log.d("TAG","model is empty!");
-            promptUserToSetupOnPhoneFirst();
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
         }
+
+        Timber.d("OnCreate");
+
+        //If the Phone listener received a delete message from the phone, it will restart this activity and set STOP_APP to true
+        if (getIntent().getBooleanExtra(STOP_APP,false)) {
+            finish();
+            return;
+        }
+
+        context = this;
+
+        if (isModelEmpty()) {
+            promptUserToSetupOnPhoneFirst();
+            return;
+        }
+
         setContentView(R.layout.activity_watch);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -40,14 +60,24 @@ public class WatchActivity extends Activity {
             public void onLayoutInflated(WatchViewStub stub) {
                 setupWearSocket();
                 setupUIElements();
-                updateModel();
+                //If the device model can't be found or has zero devices, you need to alert the user.
+                if (!updateModel()) {
+                    promptUserToSetupOnPhoneFirst();
+                }
             }
         });
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Timber.d("OnStart");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        Timber.d("OnResume");
         Log.d("TAG", "Resume: Checking if model is empty");
         if (isModelEmpty()) {
             Log.d("TAG","Resume: Model is empty");
@@ -62,7 +92,7 @@ public class WatchActivity extends Activity {
         try {
             WearSocket.getInstance().disconnect();
         } catch (Exception ex) {
-            Log.e("TAG",ex.toString());
+            Timber.d(ex,"onDestroy Crash");
         }
         super.onDestroy();
     }
@@ -83,20 +113,30 @@ public class WatchActivity extends Activity {
         });
     }
 
-    private void updateModel() {
+    private boolean updateModel() {
 
         if (isModelEmpty()) {
             promptUserToSetupOnPhoneFirst();
         }
 
         if (ModelAndKeyStorage.getInstance().getStoredDevices(context) != null) {
-            SmartThingsModelManager.setDevices(ModelAndKeyStorage.getInstance().getStoredDevices(context));
+            List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);
+            //If there are no devices stored, return null
+            if (deviceList.size()<1) {
+                return false;
+            }
+            SmartThingsModelManager.setDevices(deviceList);
+            devicesGridAdapter = new DevicesGridAdapter(context,deviceList);
+        } else {
+            //Return false if you cannot get stored devices
+            return false;
         }
         if (ModelAndKeyStorage.getInstance().getStoredPhrases(context)!=null) {
             SmartThingsModelManager.setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
         }
 
-        devicesGridAdapter.notifyDataSetChanged();
+        gridViewPager.setAdapter(devicesGridAdapter);
+        return true;
     }
 
     private boolean isModelEmpty() {
@@ -106,8 +146,8 @@ public class WatchActivity extends Activity {
 
     private void setupUIElements() {
         gridViewPager = (GridViewPager) findViewById(R.id.main_menu_grid_view);
-        devicesGridAdapter = new DevicesGridAdapter(context,SmartThingsModelManager.getDevices());
-        gridViewPager.setAdapter(devicesGridAdapter);
+//        devicesGridAdapter = new DevicesGridAdapter(context,SmartThingsModelManager.getDevices());
+//        gridViewPager.setAdapter(devicesGridAdapter);
     }
 
     private void promptUserToSetupOnPhoneFirst() {

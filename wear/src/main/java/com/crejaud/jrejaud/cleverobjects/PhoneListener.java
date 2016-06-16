@@ -1,12 +1,10 @@
 package com.crejaud.jrejaud.cleverobjects;
 
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.github.jrejaud.models.Device;
-import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
 import com.google.android.gms.wearable.DataEvent;
@@ -75,7 +73,7 @@ public class PhoneListener extends WearableListenerService {
         if (message.equals(Values.DELETE_KEY)) {
             ModelAndKeyStorage.getInstance().storePhrases(this, null);
             ModelAndKeyStorage.getInstance().storeDevices(this, null);
-            restartApp();
+            stopApp(false);
         } else {
             //Else, just print the message
             Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
@@ -98,7 +96,9 @@ public class PhoneListener extends WearableListenerService {
                 }
             }
 
-            restartApp();
+            //Stop a current execution of the app
+            //This way when the user opens it again, it will fetch the devices again.
+            stopApp(false);
         }
 
         if (key.equals(Values.PHRASES_KEY)) {
@@ -115,10 +115,11 @@ public class PhoneListener extends WearableListenerService {
             }
         }
     }
-    private void restartApp() {
+    private void stopApp(boolean restart) {
         //Then restart the app
         Intent intent = new Intent(this,WatchActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(WatchActivity.STOP_APP,!restart);
         startActivity(intent);
     }
 
