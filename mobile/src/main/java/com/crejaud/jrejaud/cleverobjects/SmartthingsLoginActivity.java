@@ -48,11 +48,8 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
 
     private void startLoginProcess() {
         Timber.d("Starting login process");
-        //Old client ID "3439c1e4-73a6-4db3-a78c-af2098f585fd"
-        //Old client secret "8633a1ae-98ad-4c0f-8f44-0faccfa13cf4"
-        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientIDKey,"162a3536-b3e8-4bb7-a5df-212a9187ba30");
-        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientSecretKey,"c5e9c060-5259-4b2b-ac63-48fa465bb74b");
-
+        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientIDKey,"2c572acc-c95b-45d9-9ceb-6f2bcff4861b");
+        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.clientSecretKey,"698a9dce-d85d-490b-99b0-a3d7236c2301");
         new AccessCode(this,loginWebView).getAccessCode();
     }
 
