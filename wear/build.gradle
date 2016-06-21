@@ -16,7 +16,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.crejaud.jrejaud.cleverobjects"
+        applicationId "com.crejaud.jrejaud.cleverwatch"
         minSdkVersion 20
         targetSdkVersion 22
         versionCode 33

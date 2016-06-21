@@ -25,7 +25,7 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        applicationId "com.crejaud.jrejaud.cleverobjects"
+        applicationId "com.crejaud.jrejaud.cleverwatch"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 33
