@@ -1,12 +1,10 @@
 package com.crejaud.jrejaud.cleverobjects;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -16,15 +14,11 @@ import android.widget.TextView;
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
 import com.github.jrejaud.models.Device;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
-import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.values.Values;
 import com.github.jrejaud.wear_socket.WearSocket;
 
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import rx.Subscriber;
 import timber.log.Timber;
 
@@ -35,9 +29,10 @@ public class PhoneActivity extends CleverObjectsActivity {
     private TextView middleText;
     private Button setupButton;
     private Button unpairButton;
-    private FrameLayout mainImage;
+    private FrameLayout mainImageFrame;
     public static final String UPDATE_WEAR_APP = "UPDATE_WEAR_APP";
     private boolean updatedThisSession = false;
+    private ImageView mainImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +44,9 @@ public class PhoneActivity extends CleverObjectsActivity {
         setupButton = (Button) findViewById(R.id.smartthings_login_button);
         unpairButton = (Button) findViewById(R.id.smartthings_unpair_button);
 
-        mainImage = (FrameLayout) findViewById(R.id.main_image);
+        mainImageFrame = (FrameLayout) findViewById(R.id.main_image_frame);
+
+        mainImage = (ImageView) findViewById(R.id.main_image);
 
         setupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +66,9 @@ public class PhoneActivity extends CleverObjectsActivity {
             middleText.setText(getString(R.string.paired_message));
             setupButton.setText(getString(R.string.repair_smartthings));
             unpairButton.setVisibility(View.VISIBLE);
-            mainImage.setVisibility(View.VISIBLE);
+            mainImage.setImageResource(R.drawable.ic_app_ready);
+        } else {
+            mainImage.setImageResource(R.drawable.smartwatch_home);
         }
     }
 

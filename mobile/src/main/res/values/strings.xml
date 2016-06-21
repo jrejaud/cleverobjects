@@ -5,8 +5,8 @@
     <string name="title_activity_smartthings_login">Pair CleverObjects</string>
 
     <string name="setup_message_1">CleverObjects lets you use your Android wear watch to control SmartThings switches and locks in your home.</string>
-    <string name="setup_broken_message">As of Dec 29, 2015, CleverObjects is having authentication issues due to a change in SmartThings authentication scheme. App will be updated with a patch to fix this. For more info, press the help button.</string>
-    <!--<string name="setup_message">Please pair SmartThings to CleverObjects to continue</string>-->
+    <!--<string name="setup_broken_message">As of Dec 29, 2015, CleverObjects is having authentication issues due to a change in SmartThings authentication scheme. App will be updated with a patch to fix this. For more info, press the help button.</string>-->
+    <string name="setup_message">Please pair SmartThings\n to CleverObjects to continue</string>
     <string name="pair_smartthings">Pair CleverObjects</string>
     <string name="repair_smartthings">Update Devices</string>
     <string name="unpair_smartthings">Unpair CleverObjects</string>
