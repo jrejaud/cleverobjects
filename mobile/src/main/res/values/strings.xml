@@ -13,5 +13,5 @@
     <string name="title_activity_clever_objects">CleverObjectsActivity</string>
     <string name="support">Support</string>
     <string name="url_google_plus">https://plus.google.com/communities/114621976777723010004</string>
-    <string name="paired_message">CleverObjects is paired with SmartThings.\nCleverObjects is ready on your watch, go try it out.</string>
+    <string name="paired_message">CleverObjects is paired with SmartThings and is ready on your watch, go try it out!\n\nYou might need to restart your watch to sync it.</string>
 </resources>
