@@ -21,4 +21,11 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.code.gson:gson:2.3.1'
+
+    //Android Wear
+    compile "com.android.support:support-v4:23.0.+"
+    compile 'com.google.android.gms:play-services-wearable:9.0.2'
+    //Non-official support library
+    //http://developer.android.com/training/wearables/apps/layouts.html#UiLibrary
+    compile 'com.google.android.support:wearable:1.1.0'
 }

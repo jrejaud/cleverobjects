@@ -34,11 +34,11 @@ public class WatchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        context = this;
+
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
-
-        Timber.d("OnCreate");
 
         //If the Phone listener received a delete message from the phone, it will restart this activity and set STOP_APP to true
         if (getIntent().getBooleanExtra(STOP_APP,false)) {
@@ -46,12 +46,10 @@ public class WatchActivity extends Activity {
             return;
         }
 
-        context = this;
-
-        if (isModelEmpty()) {
-            promptUserToSetupOnPhoneFirst();
-            return;
-        }
+//        if (isModelEmpty()) {
+//            promptUserToSetupOnPhoneFirst();
+//            return;
+//        }
 
         setContentView(R.layout.activity_watch);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
@@ -61,9 +59,9 @@ public class WatchActivity extends Activity {
                 setupWearSocket();
                 setupUIElements();
                 //If the device model can't be found or has zero devices, you need to alert the user.
-                if (!updateModel()) {
-                    promptUserToSetupOnPhoneFirst();
-                }
+//                if (!updateModel()) {
+//                    promptUserToSetupOnPhoneFirst();
+//                }
             }
         });
     }
@@ -71,7 +69,6 @@ public class WatchActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        Timber.d("OnStart");
     }
 
     @Override
@@ -79,12 +76,12 @@ public class WatchActivity extends Activity {
         super.onResume();
         Timber.d("OnResume");
         Log.d("TAG", "Resume: Checking if model is empty");
-        if (isModelEmpty()) {
-            Log.d("TAG","Resume: Model is empty");
-            promptUserToSetupOnPhoneFirst();
-        } else {
-            Log.d("TAG","Resume: Model is not empty");
-        }
+//        if (isModelEmpty()) {
+//            Log.d("TAG","Resume: Model is empty");
+//            promptUserToSetupOnPhoneFirst();
+//        } else {
+//            Log.d("TAG","Resume: Model is not empty");
+//        }
     }
 
     @Override
