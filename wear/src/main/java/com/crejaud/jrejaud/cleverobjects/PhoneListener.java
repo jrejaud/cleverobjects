@@ -96,9 +96,7 @@ public class PhoneListener extends WearableListenerService {
                 }
             }
 
-            //Stop a current execution of the app
-            //This way when the user opens it again, it will fetch the devices again.
-            stopApp(false);
+
         }
 
         if (key.equals(Values.PHRASES_KEY)) {
@@ -113,6 +111,10 @@ public class PhoneListener extends WearableListenerService {
                 }
                 ModelAndKeyStorage.getInstance().storePhrases(this, phrases);
             }
+            //Stop a current execution of the app
+            //This way when the user opens it again, it will fetch the devices again.
+            stopApp(true);
+
         }
     }
     private void stopApp(boolean restart) {
