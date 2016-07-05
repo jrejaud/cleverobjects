@@ -42,7 +42,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
     @Override
     public void websiteLoaded() {
         if (websiteLoadingDialog.isShowing()) {
-            websiteLoadingDialog.hide();
+                websiteLoadingDialog.dismiss();
         }
     }
 
@@ -79,12 +79,12 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
     @Override
     public void foundEndPoint(String url) {
         if (url==null) {
-            progressDialog.hide();
+            progressDialog.dismiss();
             showErrorMessage();
             return;
         }
         ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.endpointURIKey, url);
-        progressDialog.hide();
+        progressDialog.dismiss();
         restartApp();
     }
 
