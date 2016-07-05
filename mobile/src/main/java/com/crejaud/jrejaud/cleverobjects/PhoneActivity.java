@@ -16,6 +16,7 @@ import com.crashlytics.android.Crashlytics;
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -168,17 +169,14 @@ public class PhoneActivity extends CleverObjectsActivity {
                     Timber.e("Unable to record user acquired devices");
                 }
                 ModelAndKeyStorage.getInstance().storeDevices(context, devices);
-                updatePhrases();
-                if (BuildConfig.FLAVOR.contains("noWatch")) {
-                    return;
-                }
-                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, devices);
+
+                updatePhrases(devices);
             }
         });
 
     }
 
-    private void updatePhrases() {
+    private void updatePhrases(final List<Device> devices) {
         //Update Phrases
         SmartThings.getInstance().getPhrases(new Subscriber<List<String>>() {
             @Override
@@ -203,10 +201,11 @@ public class PhoneActivity extends CleverObjectsActivity {
                 } catch (JSONException e) {
                     Timber.e("Unable to record user phrases");
                 }
-                if (BuildConfig.FLAVOR.contains("noWatch")) {
-                    return;
-                }
-                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.PHRASES_KEY, phrases);
+
+                SmartThingsDataContainer smartThingsDataContainer = new SmartThingsDataContainer(devices,phrases);
+
+
+                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, smartThingsDataContainer);
             }
         });
     }

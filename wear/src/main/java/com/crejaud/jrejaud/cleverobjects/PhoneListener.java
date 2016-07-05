@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
 import com.google.android.gms.wearable.DataEvent;
@@ -86,36 +87,30 @@ public class PhoneListener extends WearableListenerService {
         //Use the key to determine how to cast the bloody object
         if (key.equals(Values.MODEL_KEY)) {
             if (data==null) {
+
                 //If data is null, then clear the locally stored key
                 ModelAndKeyStorage.getInstance().storeDevices(this, null);
             } else {
-                ArrayList<Device> deviceArrayList = (ArrayList<Device>) data;
-                ModelAndKeyStorage.getInstance().storeDevices(this, deviceArrayList);
-                for (Device device: deviceArrayList) {
+                SmartThingsDataContainer smartThingsDataContainer = (SmartThingsDataContainer) data;
+
+                //Store devices
+                ModelAndKeyStorage.getInstance().storeDevices(this,smartThingsDataContainer.getDevices());
+
+                for (Device device: smartThingsDataContainer.getDevices()) {
                     Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
                 }
-            }
 
+                //Store phrases
+                ModelAndKeyStorage.getInstance().storePhrases(this, smartThingsDataContainer.getPhrases());
 
-        }
-
-        if (key.equals(Values.PHRASES_KEY)) {
-
-            //If data is null, then clear the locally stored key
-            if (data==null) {
-                ModelAndKeyStorage.getInstance().storePhrases(this, null);
-            } else {
-                List<String> phrases = (ArrayList<String>) data;
-                for (String phrase : phrases) {
+                for (String phrase : smartThingsDataContainer.getPhrases()) {
                     Log.d(Values.TAG,"Received new phrase: "+phrase);
                 }
-                ModelAndKeyStorage.getInstance().storePhrases(this, phrases);
             }
             //Stop a current execution of the app
             //This way when the user opens it again, it will fetch the devices again.
             stopApp(true);
-
-        }
+            }
     }
     private void stopApp(boolean restart) {
         //Then restart the app
