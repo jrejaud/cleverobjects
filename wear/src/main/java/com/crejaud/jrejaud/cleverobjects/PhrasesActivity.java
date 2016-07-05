@@ -8,10 +8,10 @@ import android.support.wearable.view.WearableListView;
 import android.util.Log;
 
 import com.crejaud.jrejaud.cleverobjects.phrases.PhrasesAdapter;
+import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.values.DeviceStateChangeMessage;
 import com.github.jrejaud.values.Values;
-import com.github.jrejaud.wear_socket.WearSocket;
 
 import org.json.JSONException;
 import org.json.JSONObject;

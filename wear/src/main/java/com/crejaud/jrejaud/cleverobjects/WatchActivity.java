@@ -12,11 +12,11 @@ import android.widget.Toast;
 
 import com.crejaud.jrejaud.cleverobjects.devices.DevicesGridAdapter;
 import com.crejaud.jrejaud.cleverobjects.voicerecognition.VoiceRecognition;
+import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.values.Values;
-import com.github.jrejaud.wear_socket.WearSocket;
 
 import java.util.List;
 

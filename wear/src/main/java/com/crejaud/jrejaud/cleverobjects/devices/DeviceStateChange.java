@@ -1,9 +1,9 @@
 package com.crejaud.jrejaud.cleverobjects.devices;
 
+import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.values.DeviceStateChangeMessage;
 import com.github.jrejaud.values.Values;
-import com.github.jrejaud.wear_socket.WearSocket;
 
 import org.json.JSONException;
 import org.json.JSONObject;

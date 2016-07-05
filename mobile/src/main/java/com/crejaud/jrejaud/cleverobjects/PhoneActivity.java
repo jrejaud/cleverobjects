@@ -204,7 +204,6 @@ public class PhoneActivity extends CleverObjectsActivity {
 
                 SmartThingsDataContainer smartThingsDataContainer = new SmartThingsDataContainer(devices,phrases);
 
-
                 WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, smartThingsDataContainer);
             }
         });
