@@ -168,12 +168,11 @@ public class PhoneActivity extends CleverObjectsActivity {
                     Timber.e("Unable to record user acquired devices");
                 }
                 ModelAndKeyStorage.getInstance().storeDevices(context, devices);
+                updatePhrases();
                 if (BuildConfig.FLAVOR.contains("noWatch")) {
                     return;
                 }
                 WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, devices);
-
-                updatePhrases();
             }
         });
 
