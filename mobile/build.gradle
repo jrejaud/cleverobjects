@@ -51,7 +51,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     wearApp project(':wear')
     compile project(':models')
-    //I probably don't need this library, it's included in wearSocket
+
+    compile 'com.google.android.gms:play-services-wearable:9.2.0'
+
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.1.0'
 
