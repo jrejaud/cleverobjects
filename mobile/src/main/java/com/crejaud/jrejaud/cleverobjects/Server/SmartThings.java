@@ -5,10 +5,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.values.Values;
-import com.github.jrejaud.wear_socket.WearSocket;
 
 import java.util.ArrayList;
 import java.util.List;

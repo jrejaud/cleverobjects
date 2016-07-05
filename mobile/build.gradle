@@ -52,7 +52,7 @@ dependencies {
     wearApp project(':wear')
     compile project(':models')
     //I probably don't need this library, it's included in wearSocket
-//    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.1.0'
 
     compile 'com.squareup.retrofit:retrofit:1.9.0'
@@ -63,4 +63,6 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
+    //Mix Panel
+    compile "com.mixpanel.android:mixpanel-android:4.+"
 }
