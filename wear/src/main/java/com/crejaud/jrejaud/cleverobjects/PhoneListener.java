@@ -109,7 +109,7 @@ public class PhoneListener extends WearableListenerService {
             }
             //Stop a current execution of the app
             //This way when the user opens it again, it will fetch the devices again.
-            stopApp(true);
+            stopApp(false);
             }
     }
     private void stopApp(boolean restart) {

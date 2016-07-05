@@ -127,7 +127,7 @@ public class PhoneActivity extends CleverObjectsActivity {
                     @Override
                     public void run() {
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("You need to have an Android Wear Device paired to your phone to use CleverObjects");
+                        builder.setMessage("Please make sure CleverObjects is installed on your SmartWatch before pairing CleverObjects");
                         builder.setCancelable(false);
                         builder.setPositiveButton("Ok, close app", new DialogInterface.OnClickListener() {
                             @Override

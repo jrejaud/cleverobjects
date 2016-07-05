@@ -46,10 +46,10 @@ public class WatchActivity extends Activity {
             return;
         }
 
-//        if (isModelEmpty()) {
-//            promptUserToSetupOnPhoneFirst();
-//            return;
-//        }
+        if (isModelEmpty()) {
+            promptUserToSetupOnPhoneFirst();
+            return;
+        }
 
         setContentView(R.layout.activity_watch);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
@@ -58,10 +58,10 @@ public class WatchActivity extends Activity {
             public void onLayoutInflated(WatchViewStub stub) {
                 setupWearSocket();
                 setupUIElements();
-                //If the device model can't be found or has zero devices, you need to alert the user.
-//                if (!updateModel()) {
-//                    promptUserToSetupOnPhoneFirst();
-//                }
+//                If the device model can't be found or has zero devices, you need to alert the user.
+                if (!updateModel()) {
+                    promptUserToSetupOnPhoneFirst();
+                }
             }
         });
     }
