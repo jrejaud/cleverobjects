@@ -11,11 +11,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
+import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
-import com.github.jrejaud.wear_socket.WearSocket;
 
 import java.util.List;
 
@@ -153,6 +154,7 @@ public class PhoneActivity extends CleverObjectsActivity {
                     return;
                 }
                 WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, devices);
+
                 updatePhrases();
             }
         });
