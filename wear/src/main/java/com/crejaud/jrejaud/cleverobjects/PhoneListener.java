@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 /**
  * Created by jrejaud on 7/5/15.
  */
@@ -48,24 +50,38 @@ public class PhoneListener extends WearableListenerService {
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+        Timber.d("On Data Changed");
         if (!hasBeenInitialized) {initializeListener();}
         for (DataEvent dataEvent : dataEvents) {
-            DataItem dataItem = dataEvent.getDataItem();
-            if (dataItem.getUri().getPath().compareTo(Values.DATA_PATH) == 0) {
-                DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
+            if (dataEvent.getType() == DataEvent.TYPE_CHANGED) {
+                //DataItem Changed
+                DataItem item = dataEvent.getDataItem();
+                DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                Timber.d("Data map:"+dataMap.toString());
                 Set<String> keys = dataMap.keySet();
                 for (String key : keys) {
+                    Timber.d("Key: "+key);
                     String data = dataMap.getString(key);
-                    Gson gson = new Gson();
-                    if (!Values.DATA_KEYS.containsKey(key)) {
-                        Log.e(Values.TAG, key + " key not associated to a datatype, please setKeyDataType");
-                        return;
-                    }
-                    Object object = gson.fromJson(data, Values.DATA_KEYS.get(key));
-                    dataChanged(key, object);
-
+                    SmartThingsDataContainer smartThingsDataContainer = new Gson().fromJson(data,SmartThingsDataContainer.class);
+                    dataChanged(key,smartThingsDataContainer);
                 }
             }
+//            DataItem dataItem = dataEvent.getDataItem();
+//            if (dataItem.getUri().getPath().compareTo(Values.DATA_PATH) == 0) {
+//                DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
+//                Set<String> keys = dataMap.keySet();
+//                for (String key : keys) {
+//                    String data = dataMap.getString(key);
+//                    Gson gson = new Gson();
+//                    if (!Values.DATA_KEYS.containsKey(key)) {
+//                        Log.e(Values.TAG, key + " key not associated to a datatype, please setKeyDataType");
+//                        return;
+//                    }
+//                    Object object = gson.fromJson(data, Values.DATA_KEYS.get(key));
+//                    dataChanged(key, object);
+//
+//                }
+//            }
         }
     }
 

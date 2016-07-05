@@ -116,9 +116,6 @@ public class PhoneActivity extends CleverObjectsActivity {
 
     private void setupWearSocket(final Context context) {
         //If this is a flavor which uses no watch, ignore this step
-        if (BuildConfig.FLAVOR.contains("noWatch")) {
-            return;
-        }
         WearSocket wearSocket = WearSocket.getInstance();
         wearSocket.setupAndConnect(context, Values.WEAR_CAPABILITY, new WearSocket.onErrorListener() {
             @Override
