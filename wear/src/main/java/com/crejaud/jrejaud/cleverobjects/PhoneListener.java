@@ -90,7 +90,6 @@ public class PhoneListener extends WearableListenerService {
                 ModelAndKeyStorage.getInstance().storeDevices(this, null);
             } else {
                 ArrayList<Device> deviceArrayList = (ArrayList<Device>) data;
-                deviceArrayList.get(0).setLabel("Kitchen Light");
                 ModelAndKeyStorage.getInstance().storeDevices(this, deviceArrayList);
                 for (Device device: deviceArrayList) {
                     Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
