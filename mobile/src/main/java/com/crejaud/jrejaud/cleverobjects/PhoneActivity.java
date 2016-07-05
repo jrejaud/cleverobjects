@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -17,6 +18,10 @@ import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -34,11 +39,15 @@ public class PhoneActivity extends CleverObjectsActivity {
     public static final String UPDATE_WEAR_APP = "UPDATE_WEAR_APP";
     private boolean updatedThisSession = false;
     private ImageView mainImage;
+    private MixpanelAPI mixpanelAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
+
+        //Init Mixpanel
+        mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
 
         setContentView(R.layout.activity_phone);
         middleText = (TextView) findViewById(R.id.setup_message);
@@ -149,6 +158,15 @@ public class PhoneActivity extends CleverObjectsActivity {
 
             @Override
             public void onNext(List<Device> devices) {
+                try {
+                    JSONObject props = new JSONObject();
+                    for (Device device : devices) {
+                        props.put(device.getLabel(),device.getType()+"/"+device.getId());
+                    }
+                    mixpanelAPI.track("User Updated Devices:", props);
+                } catch (JSONException e) {
+                    Timber.e("Unable to record user acquired devices");
+                }
                 ModelAndKeyStorage.getInstance().storeDevices(context, devices);
                 if (BuildConfig.FLAVOR.contains("noWatch")) {
                     return;
@@ -177,6 +195,15 @@ public class PhoneActivity extends CleverObjectsActivity {
             @Override
             public void onNext(List<String> phrases) {
                 ModelAndKeyStorage.getInstance().storePhrases(context, phrases);
+                try {
+                    JSONObject props = new JSONObject();
+                    for (String phrase: phrases) {
+                        props.put(phrase,true);
+                    }
+                    mixpanelAPI.track("User Updated Phrases:", props);
+                } catch (JSONException e) {
+                    Timber.e("Unable to record user phrases");
+                }
                 if (BuildConfig.FLAVOR.contains("noWatch")) {
                     return;
                 }
