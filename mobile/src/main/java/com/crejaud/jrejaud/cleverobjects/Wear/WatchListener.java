@@ -11,9 +11,12 @@ import com.github.jrejaud.values.DeviceStateChangeMessage;
 import com.github.jrejaud.values.Values;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import timber.log.Timber;
 
 /**
  * Created by jrejaud on 7/5/15.
@@ -35,11 +38,19 @@ public class WatchListener extends WearableListenerService {
             JSONObject message = new JSONObject(messageString);
             if (message.get(DeviceStateChangeMessage.TYPE).equals(DeviceStateChangeMessage.PHRASE)) {
                 sayPhrase(message.getString(DeviceStateChangeMessage.DATA));
-
+                MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
+                mixpanelAPI.track("User Say Phrase:", message);
             }
             else if (message.get(DeviceStateChangeMessage.TYPE).equals(DeviceStateChangeMessage.DEVICE_ID)) {
                 changeDeviceState(message.getString(DeviceStateChangeMessage.DATA),message.getString(DeviceStateChangeMessage.ACTION));
+                MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
+                mixpanelAPI.track("User Change Device State:", message);
+            } else {
+                //Other message
+                MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
+                mixpanelAPI.track("User Stored:", message);
             }
+
 
         } catch (JSONException e) {
             e.printStackTrace();

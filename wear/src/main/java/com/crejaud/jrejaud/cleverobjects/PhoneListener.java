@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
 import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
@@ -112,8 +113,11 @@ public class PhoneListener extends WearableListenerService {
                 //Store devices
                 ModelAndKeyStorage.getInstance().storeDevices(this,smartThingsDataContainer.getDevices());
 
+                String storedData="";
+
                 for (Device device: smartThingsDataContainer.getDevices()) {
                     Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
+                    storedData=storedData+device.getLabel()+", ";
                 }
 
                 //Store phrases
@@ -121,7 +125,9 @@ public class PhoneListener extends WearableListenerService {
 
                 for (String phrase : smartThingsDataContainer.getPhrases()) {
                     Log.d(Values.TAG,"Received new phrase: "+phrase);
+                    storedData=storedData+phrase+", ";
                 }
+                WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, storedData);
             }
             //Stop a current execution of the app
             //This way when the user opens it again, it will fetch the devices again.
