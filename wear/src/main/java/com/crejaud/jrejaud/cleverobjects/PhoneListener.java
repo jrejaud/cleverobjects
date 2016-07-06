@@ -113,25 +113,26 @@ public class PhoneListener extends WearableListenerService {
                 //Store devices
                 ModelAndKeyStorage.getInstance().storeDevices(this,smartThingsDataContainer.getDevices());
 
-                String storedData="";
-
-                for (Device device: smartThingsDataContainer.getDevices()) {
-                    Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
-                    storedData=storedData+device.getLabel()+", ";
-                }
-
                 //Store phrases
                 ModelAndKeyStorage.getInstance().storePhrases(this, smartThingsDataContainer.getPhrases());
-
-                for (String phrase : smartThingsDataContainer.getPhrases()) {
-                    Log.d(Values.TAG,"Received new phrase: "+phrase);
-                    storedData=storedData+phrase+", ";
-                }
-                WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, storedData);
+//                String storedData="";
+//
+//                for (Device device: smartThingsDataContainer.getDevices()) {
+//                    Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
+//                    storedData=storedData+device.getLabel()+", ";
+//                }
+//
+//                //Store phrases
+//                ModelAndKeyStorage.getInstance().storePhrases(this, smartThingsDataContainer.getPhrases());
+//
+//                for (String phrase : smartThingsDataContainer.getPhrases()) {
+//                    Log.d(Values.TAG,"Received new phrase: "+phrase);
+//                    storedData=storedData+phrase+", ";
+//                }
+                stopApp(false);
             }
-            //Stop a current execution of the app
-            //This way when the user opens it again, it will fetch the devices again.
-            stopApp(false);
+//            //Stop a current execution of the app
+//            //This way when the user opens it again, it will fetch the devices again.
             }
     }
     private void stopApp(boolean restart) {

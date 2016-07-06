@@ -199,9 +199,9 @@ public class PhoneActivity extends CleverObjectsActivity {
                     Timber.e("Unable to record user phrases");
                 }
 
-                SmartThingsDataContainer smartThingsDataContainer = new SmartThingsDataContainer(devices,phrases);
-
-                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, smartThingsDataContainer);
+                //Set container to empty first (to refresh)
+                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, new SmartThingsDataContainer());
+                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, new SmartThingsDataContainer(devices,phrases));
             }
         });
     }

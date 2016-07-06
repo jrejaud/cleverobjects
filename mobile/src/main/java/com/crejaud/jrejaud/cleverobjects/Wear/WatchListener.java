@@ -45,15 +45,19 @@ public class WatchListener extends WearableListenerService {
                 changeDeviceState(message.getString(DeviceStateChangeMessage.DATA),message.getString(DeviceStateChangeMessage.ACTION));
                 MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
                 mixpanelAPI.track("User Change Device State:", message);
-            } else {
-                //Other message
-                MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
-                mixpanelAPI.track("User Stored:", message);
             }
-
 
         } catch (JSONException e) {
             e.printStackTrace();
+            //Other message
+            MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("Stored message: ",messageString);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+            mixpanelAPI.track("User Stored:", jsonObject);
         }
         super.onMessageReceived(messageEvent);
     }

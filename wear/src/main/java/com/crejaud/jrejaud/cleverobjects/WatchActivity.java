@@ -136,8 +136,10 @@ public class WatchActivity extends Activity {
         return true;
     }
 
-    private boolean isModelEmpty() {
-        return ModelAndKeyStorage.getInstance().getStoredDevices(context) == null;
+    private boolean isModelEmpty()
+    {
+        List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);
+        return deviceList == null;
 
     }
 
