@@ -241,8 +241,8 @@ public class WearSocket implements MessageApi.MessageListener, DataApi.DataListe
     //Receive Messages
     //********************************************************************
 
-    public void startMessageListener(Context context, String path) {
-        messageReceived = (MessageListener) context;
+    public void startMessageListener(MessageListener messageListener, String path) {
+        messageReceived = messageListener;
         this.receiverPath = path;
         Wearable.MessageApi.addListener(googleApiClient, this);
     }

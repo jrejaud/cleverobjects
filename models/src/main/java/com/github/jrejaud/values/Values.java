@@ -20,4 +20,6 @@ public class Values {
     //Send this message when you want the wear app to delete its local keys
     public static final String DELETE_KEY = "CleverObjects_Delete";
 
+    //Message sent from wear to phone (asking for updated device data)
+    public static final String REQUEST_DATA = "REQUEST_DATA";
 }

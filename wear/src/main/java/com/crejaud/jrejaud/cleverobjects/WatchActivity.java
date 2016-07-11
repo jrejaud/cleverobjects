@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
@@ -36,34 +35,56 @@ public class WatchActivity extends Activity {
 
         context = this;
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        }
-
         //If the Phone listener received a delete message from the phone, it will restart this activity and set STOP_APP to true
         if (getIntent().getBooleanExtra(STOP_APP,false)) {
             finish();
             return;
         }
 
-        if (isModelEmpty()) {
-            promptUserToSetupOnPhoneFirst();
-            return;
+        //Setup debugging (if needed)
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
         }
 
+        //Setup App
         setContentView(R.layout.activity_watch);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
+                //Setup WearSocket
                 setupWearSocket();
+
+                //Setup UI Elements
                 setupUIElements();
-//                If the device model can't be found or has zero devices, you need to alert the user.
-                if (!updateModel()) {
-                    promptUserToSetupOnPhoneFirst();
+
+                //If Device Model is Empty
+                if (isDevicesModelEmpty()) {
+
+                    //Show a message telling the user that app is updated
+                    Timber.d("No local device model, checking mobile app");
+
+                    //Start Message Listener
+                    WearSocket.getInstance().startMessageListener(new WearSocket.MessageListener() {
+                        @Override
+                        public void messageReceived(String path, String message) {
+                            Timber.d("Received mobile message: "+message);
+                            //If there are no devices on phone
+                            //If there are devices on phone gogogo
+                            //updateDevicesView();
+                        }
+                    },Values.MESSAGE_PATH);
+
+                    //Send a message to the app asking for updated devices
+                    WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,Values.REQUEST_DATA);
+                    return;
                 }
+
+                //If device model is not empty, then update the devices view from the preferences
+                updateDevicesView(getDevicesFromPreferences(),getPhrasesFromPreferences());
             }
         });
+
     }
 
     @Override
@@ -75,13 +96,6 @@ public class WatchActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Timber.d("OnResume");
-        Log.d("TAG", "Resume: Checking if model is empty");
-//        if (isModelEmpty()) {
-//            Log.d("TAG","Resume: Model is empty");
-//            promptUserToSetupOnPhoneFirst();
-//        } else {
-//            Log.d("TAG","Resume: Model is not empty");
-//        }
     }
 
     @Override
@@ -110,33 +124,52 @@ public class WatchActivity extends Activity {
         });
     }
 
-    private boolean updateModel() {
+    private List<Device> getDevicesFromPreferences() {
+        return ModelAndKeyStorage.getInstance().getStoredDevices(context);
+    }
 
-        if (isModelEmpty()) {
-            promptUserToSetupOnPhoneFirst();
-        }
+    private List<String> getPhrasesFromPreferences() {
+        return ModelAndKeyStorage.getInstance().getStoredPhrases(context);
+    }
 
-        if (ModelAndKeyStorage.getInstance().getStoredDevices(context) != null) {
-            List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);
-            //If there are no devices stored, return null
-            if (deviceList.size()<1) {
-                return false;
-            }
+    private void updateDevicesView(List<Device> deviceList, List<String> phrasesList) {
+
+        if (deviceList.size()>1) {
             SmartThingsModelManager.setDevices(deviceList);
             devicesGridAdapter = new DevicesGridAdapter(context,deviceList);
-        } else {
-            //Return false if you cannot get stored devices
-            return false;
         }
-        if (ModelAndKeyStorage.getInstance().getStoredPhrases(context)!=null) {
-            SmartThingsModelManager.setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
+
+        if (phrasesList.size()>1) {
+            SmartThingsModelManager.setPhrases(phrasesList);
         }
 
         gridViewPager.setAdapter(devicesGridAdapter);
-        return true;
     }
 
-    private boolean isModelEmpty()
+//    private boolean updateDevicesView() {
+//
+//        if (ModelAndKeyStorage.getInstance().getStoredDevices(context) != null) {
+//            List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);
+//            //If there are no devices stored, return null
+//            if (deviceList.size()<1) {
+//                return false;
+//            }
+//            SmartThingsModelManager.setDevices(deviceList);
+//            devicesGridAdapter = new DevicesGridAdapter(context,deviceList);
+//        } else {
+//            //Return false if you cannot get stored devices
+//            return false;
+//        }
+//        if (ModelAndKeyStorage.getInstance().getStoredPhrases(context)!=null) {
+//            SmartThingsModelManager.setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
+//        }
+//
+//        gridViewPager.setAdapter(devicesGridAdapter);
+//        return true;
+//    }
+
+    /** */
+    private boolean isDevicesModelEmpty()
     {
         List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);
         return deviceList == null;
@@ -145,8 +178,6 @@ public class WatchActivity extends Activity {
 
     private void setupUIElements() {
         gridViewPager = (GridViewPager) findViewById(R.id.main_menu_grid_view);
-//        devicesGridAdapter = new DevicesGridAdapter(context,SmartThingsModelManager.getDevices());
-//        gridViewPager.setAdapter(devicesGridAdapter);
     }
 
     private void promptUserToSetupOnPhoneFirst() {
