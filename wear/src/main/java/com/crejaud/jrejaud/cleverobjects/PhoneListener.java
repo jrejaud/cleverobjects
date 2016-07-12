@@ -92,9 +92,6 @@ public class PhoneListener extends WearableListenerService {
             ModelAndKeyStorage.getInstance().storePhrases(this, null);
             ModelAndKeyStorage.getInstance().storeDevices(this, null);
             stopApp(false);
-        } else {
-            //Else, just print the message
-            Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
         }
     }
 

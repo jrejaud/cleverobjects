@@ -27,8 +27,6 @@ import timber.log.Timber;
 public class WatchActivity extends Activity {
 
     public static Context context;
-    private GridViewPager gridViewPager;
-    private DevicesGridAdapter devicesGridAdapter;
     public static final String STOP_APP = "STOP_APP";
 
     @Override
@@ -50,15 +48,15 @@ public class WatchActivity extends Activity {
 
         //Setup App
         setContentView(R.layout.activity_watch);
+
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
+
+
                 //Setup WearSocket
                 setupWearSocket();
-
-                //Setup UI Elements
-                setupUIElements();
 
                 //If Device Model is Empty
                 if (isDevicesModelEmpty()) {
@@ -83,6 +81,9 @@ public class WatchActivity extends Activity {
                                 } else {
                                     //If there are devices on phone's message
 
+                                    Timber.d("Saving mobile data");
+
+
                                     //Extract the device list via JSON
                                     SmartThingsDataContainer smartThingsDataContainer = new Gson().fromJson(message,SmartThingsDataContainer.class);
 
@@ -98,10 +99,12 @@ public class WatchActivity extends Activity {
                     },Values.MESSAGE_PATH);
 
                     //Send a message to the app asking for updated devices
+                    Timber.d("Ask the mobile app for update devices");
                     WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,Values.REQUEST_DATA);
                     return;
                 }
 
+                Timber.d("Device Model is not empty, updating device view");
                 //If device model is not empty, then update the devices view from the preferences
                 updateDevicesView(getDevicesFromPreferences(),getPhrasesFromPreferences());
             }
@@ -156,29 +159,27 @@ public class WatchActivity extends Activity {
 
     private void updateDevicesView(List<Device> deviceList, List<String> phrasesList) {
 
-        if (deviceList.size()>1) {
+        GridViewPager gridViewPager = (GridViewPager) findViewById(R.id.main_menu_grid_view);
+
+        DevicesGridAdapter devicesGridAdapter;
+
+        if (deviceList.size()>0) {
             SmartThingsModelManager.setDevices(deviceList);
             devicesGridAdapter = new DevicesGridAdapter(context,deviceList);
+            gridViewPager.setAdapter(devicesGridAdapter);
         }
 
-        if (phrasesList.size()>1) {
+        if (phrasesList.size()>0) {
             SmartThingsModelManager.setPhrases(phrasesList);
         }
-
-        gridViewPager.setAdapter(devicesGridAdapter);
     }
-    
 
-    /** */
+
     private boolean isDevicesModelEmpty()
     {
         List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);
         return deviceList == null;
 
-    }
-
-    private void setupUIElements() {
-        gridViewPager = (GridViewPager) findViewById(R.id.main_menu_grid_view);
     }
 
     private void promptUserToSetupOnPhoneFirst() {
