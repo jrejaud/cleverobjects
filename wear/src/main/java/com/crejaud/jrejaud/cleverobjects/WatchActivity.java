@@ -13,9 +13,11 @@ import com.crejaud.jrejaud.cleverobjects.devices.DevicesGridAdapter;
 import com.crejaud.jrejaud.cleverobjects.voicerecognition.VoiceRecognition;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.values.Values;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -68,10 +70,30 @@ public class WatchActivity extends Activity {
                     WearSocket.getInstance().startMessageListener(new WearSocket.MessageListener() {
                         @Override
                         public void messageReceived(String path, String message) {
-                            Timber.d("Received mobile message: "+message);
-                            //If there are no devices on phone
-                            //If there are devices on phone gogogo
-                            //updateDevicesView();
+
+                            if (path.equals(Values.MESSAGE_PATH)) {
+                                Timber.d("Received mobile message: "+message);
+
+                                //If there are no devices on phone
+                                if (message.equals(Values.NO_DATA)) {
+                                    //Show bad message
+                                    Timber.d("No device data on the phone");
+                                    promptUserToSetupOnPhoneFirst();
+                                    return;
+                                } else {
+                                    //If there are devices on phone's message
+
+                                    //Extract the device list via JSON
+                                    SmartThingsDataContainer smartThingsDataContainer = new Gson().fromJson(message,SmartThingsDataContainer.class);
+
+                                    //Save the devices locally
+                                    ModelAndKeyStorage.getInstance().storeDevices(context,smartThingsDataContainer.getDevices());
+                                    ModelAndKeyStorage.getInstance().storePhrases(context, smartThingsDataContainer.getPhrases());
+
+                                    //Update Devices View
+                                    updateDevicesView(smartThingsDataContainer.getDevices(),smartThingsDataContainer.getPhrases());
+                                }
+                            }
                         }
                     },Values.MESSAGE_PATH);
 
@@ -145,28 +167,7 @@ public class WatchActivity extends Activity {
 
         gridViewPager.setAdapter(devicesGridAdapter);
     }
-
-//    private boolean updateDevicesView() {
-//
-//        if (ModelAndKeyStorage.getInstance().getStoredDevices(context) != null) {
-//            List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);
-//            //If there are no devices stored, return null
-//            if (deviceList.size()<1) {
-//                return false;
-//            }
-//            SmartThingsModelManager.setDevices(deviceList);
-//            devicesGridAdapter = new DevicesGridAdapter(context,deviceList);
-//        } else {
-//            //Return false if you cannot get stored devices
-//            return false;
-//        }
-//        if (ModelAndKeyStorage.getInstance().getStoredPhrases(context)!=null) {
-//            SmartThingsModelManager.setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
-//        }
-//
-//        gridViewPager.setAdapter(devicesGridAdapter);
-//        return true;
-//    }
+    
 
     /** */
     private boolean isDevicesModelEmpty()

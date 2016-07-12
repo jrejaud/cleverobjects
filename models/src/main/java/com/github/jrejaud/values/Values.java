@@ -22,4 +22,7 @@ public class Values {
 
     //Message sent from wear to phone (asking for updated device data)
     public static final String REQUEST_DATA = "REQUEST_DATA";
+
+    //Reply from the phone to the wear if there is no data for the updated device data request
+    public static final String NO_DATA = "NO_DATA";
 }
