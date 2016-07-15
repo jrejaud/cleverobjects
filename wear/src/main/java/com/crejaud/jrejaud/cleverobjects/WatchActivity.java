@@ -49,88 +49,69 @@ public class WatchActivity extends Activity {
         //Setup App
         setContentView(R.layout.activity_watch);
 
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
 
-
-                //Setup WearSocket
-                setupWearSocket();
-
-                //If Device Model is Empty
-                if (isDevicesModelEmpty()) {
-
-                    //Show a message telling the user that app is updated
-                    Timber.d("No local device model, checking mobile app");
-
-                    //Start Message Listener
-                    WearSocket.getInstance().startMessageListener(new WearSocket.MessageListener() {
-                        @Override
-                        public void messageReceived(String path, String message) {
-
-                            if (path.equals(Values.MESSAGE_PATH)) {
-                                Timber.d("Received mobile message: "+message);
-
-                                //If there are no devices on phone
-                                if (message.equals(Values.NO_DATA)) {
-                                    //Show bad message
-                                    Timber.d("No device data on the phone");
-                                    promptUserToSetupOnPhoneFirst();
-                                    return;
-                                } else {
-                                    //If there are devices on phone's message
-
-                                    Timber.d("Saving mobile data");
-
-
-                                    //Extract the device list via JSON
-                                    SmartThingsDataContainer smartThingsDataContainer = new Gson().fromJson(message,SmartThingsDataContainer.class);
-
-                                    //Save the devices locally
-                                    ModelAndKeyStorage.getInstance().storeDevices(context,smartThingsDataContainer.getDevices());
-                                    ModelAndKeyStorage.getInstance().storePhrases(context, smartThingsDataContainer.getPhrases());
-
-                                    //Update Devices View
-                                    updateDevicesView(smartThingsDataContainer.getDevices(),smartThingsDataContainer.getPhrases());
-                                }
-                            }
-                        }
-                    },Values.MESSAGE_PATH);
-
-                    //Send a message to the app asking for updated devices
-                    Timber.d("Ask the mobile app for update devices");
-                    WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,Values.REQUEST_DATA);
-                    return;
-                }
-
-                Timber.d("Device Model is not empty, updating device view");
-                //If device model is not empty, then update the devices view from the preferences
-                updateDevicesView(getDevicesFromPreferences(),getPhrasesFromPreferences());
-            }
-        });
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Timber.d("OnResume");
+
+        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+            @Override
+            public void onLayoutInflated(WatchViewStub stub) {
+
+                //Setup WearSocket
+                setupWearSocket();
+
+                //Start Message Listener
+                WearSocket.getInstance().startMessageListener(new WearSocket.MessageListener() {
+                    @Override
+                    public void messageReceived(String path, String message) {
+
+                        if (path.equals(Values.MESSAGE_PATH)) {
+                            Timber.d("Received mobile message: " + message);
+
+                            //If there are no devices on phone
+                            if (message.equals(Values.NO_DATA)) {
+                                //Show bad message
+                                Timber.d("No device data on the phone");
+                                promptUserToSetupOnPhoneFirst();
+                                return;
+                            } else {
+                                //If there are devices on phone's message
+
+                                Timber.d("Saving mobile data");
+
+
+                                //Extract the device list via JSON
+                                SmartThingsDataContainer smartThingsDataContainer = new Gson().fromJson(message, SmartThingsDataContainer.class);
+
+                                //Update Devices View
+                                updateDevicesView(smartThingsDataContainer.getDevices(), smartThingsDataContainer.getPhrases());
+                            }
+                        }
+                    }
+                }, Values.MESSAGE_PATH);
+
+                //Send a message to the app asking for updated devices
+                Timber.d("Ask the mobile app for update devices");
+                WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, Values.REQUEST_DATA);
+                return;
+            }
+        });
+
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
         try {
             WearSocket.getInstance().disconnect();
         } catch (Exception ex) {
             Timber.d(ex,"onDestroy Crash");
         }
-        super.onDestroy();
+        super.onStop();
     }
 
     private void setupWearSocket() {
@@ -149,10 +130,12 @@ public class WatchActivity extends Activity {
         });
     }
 
+    @Deprecated
     private List<Device> getDevicesFromPreferences() {
         return ModelAndKeyStorage.getInstance().getStoredDevices(context);
     }
 
+    @Deprecated
     private List<String> getPhrasesFromPreferences() {
         return ModelAndKeyStorage.getInstance().getStoredPhrases(context);
     }
@@ -175,6 +158,7 @@ public class WatchActivity extends Activity {
     }
 
 
+    @Deprecated
     private boolean isDevicesModelEmpty()
     {
         List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);

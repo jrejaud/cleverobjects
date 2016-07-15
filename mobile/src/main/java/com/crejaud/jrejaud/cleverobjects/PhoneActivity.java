@@ -94,10 +94,8 @@ public class PhoneActivity extends CleverObjectsActivity {
     protected void onResume() {
         super.onResume();
 
-
         if (getIntent().getBooleanExtra(UPDATE_WEAR_APP, false) && hasUserAlreadySetUpSmartThings()) {
             if (!updatedThisSession) {
-                setupWearSocket(this);
                 updateModelAndPhrases(this);
                 updatedThisSession = true;
             }
