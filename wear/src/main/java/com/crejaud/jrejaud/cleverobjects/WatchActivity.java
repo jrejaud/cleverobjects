@@ -167,7 +167,7 @@ public class WatchActivity extends Activity {
     }
 
     private void promptUserToSetupOnPhoneFirst() {
-        Toast.makeText(this,"Please set up CleverObjects on phone first",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"No devices paired to CleverObjects found, please set up CleverObjects on phone first",Toast.LENGTH_SHORT).show();
         finish();
     }
 

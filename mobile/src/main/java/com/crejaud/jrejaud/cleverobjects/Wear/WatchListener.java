@@ -73,6 +73,8 @@ public class WatchListener extends WearableListenerService {
             } else {
                 //If there are no devices, just send a NO DATA message
                 WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,Values.NO_DATA);
+                MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
+                mixpanelAPI.track("No Data Message Sent",null);
             }
 
 
