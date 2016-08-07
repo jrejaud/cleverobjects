@@ -64,7 +64,7 @@ public class PhoneListener extends WearableListenerService {
                     Timber.d("Key: "+key);
                     String data = dataMap.getString(key);
                     SmartThingsDataContainer smartThingsDataContainer = new Gson().fromJson(data,SmartThingsDataContainer.class);
-                    dataChanged(key,smartThingsDataContainer);
+//                    dataChanged(key,smartThingsDataContainer);
                 }
             }
 //            DataItem dataItem = dataEvent.getDataItem();
@@ -95,43 +95,43 @@ public class PhoneListener extends WearableListenerService {
         }
     }
 
-    public void dataChanged(String key, Object data) {
-        Log.d(Values.TAG, "Main data change method reached");
-
-        //Use the key to determine how to cast the bloody object
-        if (key.equals(Values.MODEL_KEY)) {
-            if (data==null) {
-
-                //If data is null, then clear the locally stored key
-                ModelAndKeyStorage.getInstance().storeDevices(this, null);
-            } else {
-                SmartThingsDataContainer smartThingsDataContainer = (SmartThingsDataContainer) data;
-
-                //Store devices
-                ModelAndKeyStorage.getInstance().storeDevices(this,smartThingsDataContainer.getDevices());
-
-                //Store phrases
-                ModelAndKeyStorage.getInstance().storePhrases(this, smartThingsDataContainer.getPhrases());
-//                String storedData="";
+//    public void dataChanged(String key, Object data) {
+//        Log.d(Values.TAG, "Main data change method reached");
 //
-//                for (Device device: smartThingsDataContainer.getDevices()) {
-//                    Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
-//                    storedData=storedData+device.getLabel()+", ";
-//                }
-//
-//                //Store phrases
-//                ModelAndKeyStorage.getInstance().storePhrases(this, smartThingsDataContainer.getPhrases());
-//
-//                for (String phrase : smartThingsDataContainer.getPhrases()) {
-//                    Log.d(Values.TAG,"Received new phrase: "+phrase);
-//                    storedData=storedData+phrase+", ";
-//                }
-                stopApp(false);
-            }
-//            //Stop a current execution of the app
-//            //This way when the user opens it again, it will fetch the devices again.
-            }
-    }
+//        //Use the key to determine how to cast the bloody object
+////        if (key.equals(Values.MODEL_KEY)) {
+////            if (data==null) {
+////
+////                //If data is null, then clear the locally stored key
+////                ModelAndKeyStorage.getInstance().storeDevices(this, null);
+////            } else {
+////                SmartThingsDataContainer smartThingsDataContainer = (SmartThingsDataContainer) data;
+////
+////                //Store devices
+////                ModelAndKeyStorage.getInstance().storeDevices(this,smartThingsDataContainer.getDevices());
+////
+////                //Store phrases
+////                ModelAndKeyStorage.getInstance().storePhrases(this, smartThingsDataContainer.getPhrases());
+////                String storedData="";
+////
+////                for (Device device: smartThingsDataContainer.getDevices()) {
+////                    Log.d(Values.TAG,"Received new device: "+device.getType()+" "+device.getLabel());
+////                    storedData=storedData+device.getLabel()+", ";
+////                }
+////
+////                //Store phrases
+////                ModelAndKeyStorage.getInstance().storePhrases(this, smartThingsDataContainer.getPhrases());
+////
+////                for (String phrase : smartThingsDataContainer.getPhrases()) {
+////                    Log.d(Values.TAG,"Received new phrase: "+phrase);
+////                    storedData=storedData+phrase+", ";
+////                }
+////                stopApp(false);
+//            }
+////            //Stop a current execution of the app
+////            //This way when the user opens it again, it will fetch the devices again.
+//            }
+//    }
     private void stopApp(boolean restart) {
         //Then restart the app
         Intent intent = new Intent(this,WatchActivity.class);
