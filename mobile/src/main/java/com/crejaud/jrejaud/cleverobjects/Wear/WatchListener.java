@@ -6,6 +6,7 @@ import android.util.Log;
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.Phrase;
 import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
@@ -27,6 +28,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 import timber.log.Timber;
 
 /**
@@ -55,14 +59,22 @@ public class WatchListener extends WearableListenerService {
                 }
             });
 
-            //Get devices from preferences
-            List<Device> deviceList = ModelAndKeyStorage.getInstance().getStoredDevices(context);
-            List<String> phrasesList = ModelAndKeyStorage.getInstance().getStoredPhrases(context);
+
+            //Get the devices from the DB
+            RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+            Realm.setDefaultConfiguration(realmConfig);
+
+            // Get a Realm instance for this thread
+            Realm realm = Realm.getDefaultInstance();
+
+            //Get devices and phrases from DB
+            RealmResults<Device> devices = realm.where(Device.class).findAll();
+            RealmResults<Phrase> phrases = realm.where(Phrase.class).findAll();
 
             //If there are devices
-            if (deviceList!=null&&deviceList.size()>0) {
+            if (devices!=null&&phrases.size()>0) {
                 //Create SmartThingData Container
-                SmartThingsDataContainer smartThingsDataContainer = new SmartThingsDataContainer(deviceList,phrasesList);
+                SmartThingsDataContainer smartThingsDataContainer = new SmartThingsDataContainer(devices,phrases);
 
                 //Convert DataContainer to JSON
                 Gson gson = new Gson();

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.crashlytics.android.Crashlytics;
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.Phrase;
 import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
@@ -26,6 +28,10 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 import rx.Subscriber;
 import timber.log.Timber;
 
@@ -50,6 +56,10 @@ public class PhoneActivity extends CleverObjectsActivity {
         //Init Mixpanel
         mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
 
+        // Create a RealmConfiguration that saves the Realm file in the app's "files" directory.
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(realmConfig);
+
         setContentView(R.layout.activity_phone);
         middleText = (TextView) findViewById(R.id.setup_message);
         setupButton = (Button) findViewById(R.id.smartthings_login_button);
@@ -73,14 +83,33 @@ public class PhoneActivity extends CleverObjectsActivity {
             }
         });
 
-        if (hasUserAlreadySetUpSmartThings()) {
-            middleText.setText(getString(R.string.paired_message));
-            setupButton.setText(getString(R.string.repair_smartthings));
-            unpairButton.setVisibility(View.VISIBLE);
-            mainImage.setImageResource(R.drawable.ic_app_ready);
-        } else {
-            mainImage.setImageResource(R.drawable.smartwatch_home);
-        }
+        // Get a Realm instance for this thread
+        Realm realm = Realm.getDefaultInstance();
+
+        //Set Devices Listener
+        RealmResults<Device> devices = realm.where(Device.class).findAll();
+        devices.addChangeListener(new RealmChangeListener<RealmResults<Device>>() {
+            @Override
+            public void onChange(RealmResults<Device> devices) {
+                if (devices.size()>0) {
+                    setSetupView();
+                } else {
+                    setNotSetupView();
+                }
+
+            }
+        });
+    }
+
+    private void setSetupView() {
+        middleText.setText(getString(R.string.paired_message));
+        setupButton.setText(getString(R.string.repair_smartthings));
+        unpairButton.setVisibility(View.VISIBLE);
+        mainImage.setImageResource(R.drawable.ic_app_ready);
+    }
+
+    private void setNotSetupView() {
+        mainImage.setImageResource(R.drawable.smartwatch_home);
     }
 
     private void restartApp() {
@@ -94,7 +123,7 @@ public class PhoneActivity extends CleverObjectsActivity {
     protected void onResume() {
         super.onResume();
 
-        if (getIntent().getBooleanExtra(UPDATE_WEAR_APP, false) && hasUserAlreadySetUpSmartThings()) {
+        if (getIntent().getBooleanExtra(UPDATE_WEAR_APP, false)) {
             if (!updatedThisSession) {
                 updateModelAndPhrases(this);
                 updatedThisSession = true;
@@ -153,24 +182,86 @@ public class PhoneActivity extends CleverObjectsActivity {
             }
 
             @Override
-            public void onNext(List<Device> devices) {
-                try {
-                    JSONObject props = new JSONObject();
-                    for (Device device : devices) {
-                        props.put(device.getLabel(),device.getType()+"/"+device.getId());
-                    }
-                    mixpanelAPI.track("User Updated Devices:", props);
-                } catch (JSONException e) {
-                    Timber.e("Unable to record user acquired devices");
-                }
-                ModelAndKeyStorage.getInstance().storeDevices(context, devices);
+            public void onNext(final List<Device> devices) {
+                // Get a Realm instance for this thread
+                Realm realm = Realm.getDefaultInstance();
 
-                updatePhrases(devices);
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        //Delete existing devices
+                        RealmResults<Device> result = realm.where(Device.class).findAll();
+                        result.deleteAllFromRealm();
+                        //Save the devices to realm
+                        realm.copyToRealm(devices);
+
+                    }
+                }, new Realm.Transaction.OnSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        //Success saved devices
+                        //Update phrases next
+                        updatePhrases();
+
+                    }
+                }, new Realm.Transaction.OnError() {
+                    @Override
+                    public void onError(Throwable error) {
+                        throw new RuntimeException(error);
+                    }
+                });
             }
         });
 
     }
 
+    private void updatePhrases() {
+        //Update Phrases
+        SmartThings.getInstance().getPhrases(new Subscriber<List<String>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                throw new RuntimeException(e);
+            }
+
+            @Override
+            public void onNext(final List<String> phrases) {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        //Delete existing phrases
+                        RealmResults<Phrase> result = realm.where(Phrase.class).findAll();
+                        result.deleteAllFromRealm();
+                        //Save the phrases to realm
+                        for (String phrase : phrases) {
+                            Phrase realmPhrase = realm.createObject(Phrase.class);
+                            realmPhrase.setName(phrase);
+                        }
+                    }
+                }, new Realm.Transaction.OnSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        //Show user that update is complete
+                        setSetupView();
+
+                    }
+                }, new Realm.Transaction.OnError() {
+                    @Override
+                    public void onError(Throwable error) {
+                        throw new RuntimeException(error);
+                    }
+                });
+
+            }
+        });
+    }
+
+    @Deprecated
     private void updatePhrases(final List<Device> devices) {
         //Update Phrases
         SmartThings.getInstance().getPhrases(new Subscriber<List<String>>() {
@@ -209,12 +300,13 @@ public class PhoneActivity extends CleverObjectsActivity {
         startActivity(smartThingsLoginIntent);
     }
 
-    private boolean hasUserAlreadySetUpSmartThings() {
-        if (ModelAndKeyStorage.getInstance().getData(context,ModelAndKeyStorage.authTokenKey)==null) {
-            return false;
-        }
-        return true;
-    }
+    @Deprecated
+//    private boolean hasUserAlreadySetUpSmartThings() {
+//        if (ModelAndKeyStorage.getInstance().getData(context,ModelAndKeyStorage.authTokenKey)==null) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     /** Removes the auth token stored on the mobile app and sends a message to the wear app telling it to kill its tokens */
     private void deleteAuthToken() {
@@ -224,12 +316,38 @@ public class PhoneActivity extends CleverObjectsActivity {
         alertDialogBuilder.setPositiveButton("Unpair", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //Remove auth token
                 ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.authTokenKey, null);
-                if (BuildConfig.FLAVOR.contains("noWatch")) {
-                    return;
-                }
-                WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, Values.DELETE_KEY);
-                restartApp();
+                //Remove local devices
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        //Delete existing devices
+                        RealmResults<Device> result = realm.where(Device.class).findAll();
+                        result.deleteAllFromRealm();
+
+                        //Delete existing Phrases
+                        RealmResults<Phrase> phrasesResult = realm.where(Phrase.class).findAll();
+                        phrasesResult.deleteAllFromRealm();
+
+                    }
+                }, new Realm.Transaction.OnSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        //Delete the stuff on the watch and restart the app
+                        if (BuildConfig.FLAVOR.contains("noWatch")) {
+                            return;
+                        }
+                        WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, Values.DELETE_KEY);
+                        restartApp();
+                    }
+                }, new Realm.Transaction.OnError() {
+                    @Override
+                    public void onError(Throwable error) {
+                        throw new RuntimeException(error);
+                    }
+                });
             }
         });
 

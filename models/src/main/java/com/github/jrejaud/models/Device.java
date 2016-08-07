@@ -2,10 +2,12 @@ package com.github.jrejaud.models;
 
 import com.google.gson.annotations.Expose;
 
+import io.realm.RealmObject;
+
 /**
  * Created using http://www.jsonschema2pojo.org/
  */
-public class Device {
+public class Device extends RealmObject {
 
     public static final String SWITCH = "switch";
     public static final String LOCK = "lock";

@@ -13,13 +13,21 @@ public class SmartThingsDataContainer {
     List<Device> devices;
 
     @Expose
-    List<String> phrases;
+    List<Phrase> phrases;
 
     public SmartThingsDataContainer() {
     }
 
-    public SmartThingsDataContainer(List<Device> devices, List<String> phrases) {
+    public SmartThingsDataContainer(List<Device> devices, List<Phrase> phrases) {
         this.devices = devices;
+        this.phrases = phrases;
+    }
+
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
+    }
+
+    public void setPhrases(List<Phrase> phrases) {
         this.phrases = phrases;
     }
 
@@ -27,7 +35,7 @@ public class SmartThingsDataContainer {
         return devices;
     }
 
-    public List<String> getPhrases() {
+    public List<Phrase> getPhrases() {
         return phrases;
     }
 
