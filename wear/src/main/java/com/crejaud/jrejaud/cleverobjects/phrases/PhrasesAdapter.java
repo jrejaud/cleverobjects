@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.crejaud.jrejaud.cleverobjects.R;
+import com.github.jrejaud.models.Phrase;
 
 import java.util.List;
 
@@ -15,12 +16,12 @@ import java.util.List;
  * Created by jrejaud on 6/29/15.
  */
 public class PhrasesAdapter extends WearableListView.Adapter {
-        private List<String> phrases;
+        private List<Phrase> phrases;
         private final Context mContext;
         private final LayoutInflater mInflater;
 
         // Provide a suitable constructor (depends on the kind of phrases)
-        public PhrasesAdapter(Context context, List<String> phrases) {
+        public PhrasesAdapter(Context context, List<Phrase> phrases) {
             mContext = context;
             mInflater = LayoutInflater.from(context);
             this.phrases = phrases;
@@ -59,7 +60,7 @@ public class PhrasesAdapter extends WearableListView.Adapter {
             PhraseViewHolder itemHolder = (PhraseViewHolder) holder;
             TextView view = itemHolder.textView;
             // replace text contents
-            view.setText(phrases.get(position));
+            view.setText(phrases.get(position).getName());
             // replace list item's metadata
             holder.itemView.setTag(position);
         }

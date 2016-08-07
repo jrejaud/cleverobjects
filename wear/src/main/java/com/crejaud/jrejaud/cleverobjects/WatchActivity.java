@@ -13,6 +13,7 @@ import com.crejaud.jrejaud.cleverobjects.devices.DevicesGridAdapter;
 import com.crejaud.jrejaud.cleverobjects.voicerecognition.VoiceRecognition;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.Phrase;
 import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.models.SmartThingsModelManager;
@@ -140,7 +141,7 @@ public class WatchActivity extends Activity {
         return ModelAndKeyStorage.getInstance().getStoredPhrases(context);
     }
 
-    private void updateDevicesView(List<Device> deviceList, List<String> phrasesList) {
+    private void updateDevicesView(List<Device> deviceList, List<Phrase> phrasesList) {
 
         GridViewPager gridViewPager = (GridViewPager) findViewById(R.id.main_menu_grid_view);
 

@@ -13,17 +13,17 @@ import java.util.List;
 public class SmartThingsModelManager {
 
     private static List<Device> Devices = new ArrayList<>();
-    private static List<String> Phrases = new ArrayList<>();
+    private static List<Phrase> Phrases = new ArrayList<>();
 
     public static List<Device> getDevices() {
         return Devices;
     }
 
-    public static List<String> getPhrases() {
+    public static List<Phrase> getPhrases() {
         return Phrases;
     }
 
-    public static void setPhrases(List<String> phrases) {
+    public static void setPhrases(List<Phrase> phrases) {
         SmartThingsModelManager.Phrases = phrases;
     }
 
