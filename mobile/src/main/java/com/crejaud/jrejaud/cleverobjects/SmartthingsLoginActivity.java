@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import com.crejaud.jrejaud.cleverobjects.Authentication.AccessCode;
 import com.crejaud.jrejaud.cleverobjects.Authentication.AccessToken;
@@ -85,7 +84,7 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
         }
         ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.endpointURIKey, url);
         progressDialog.dismiss();
-        restartApp();
+        restartApp(url);
     }
 
     private void showErrorMessage() {
@@ -114,9 +113,9 @@ public class SmartthingsLoginActivity extends CleverObjectsActivity implements A
         alertDialogBuilder.create().show();
     }
 
-    private void restartApp() {
+    private void restartApp(String endpointURL) {
         Intent intent = new Intent(this,PhoneActivity.class);
-        intent.putExtra(PhoneActivity.UPDATE_WEAR_APP,true);
+        intent.putExtra(PhoneActivity.ENDPOINT_URL,endpointURL);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

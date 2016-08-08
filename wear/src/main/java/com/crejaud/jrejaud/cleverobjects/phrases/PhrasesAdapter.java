@@ -65,6 +65,7 @@ public class PhrasesAdapter extends WearableListView.Adapter {
             holder.itemView.setTag(position);
         }
 
+
         // Return the size of your dataset
         // (invoked by the WearableListView's layout manager)
         @Override

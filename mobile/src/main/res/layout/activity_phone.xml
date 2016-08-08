@@ -13,7 +13,7 @@
         android:layout_height="0dp">
 
         <ImageView
-            android:src="@drawable/ic_app_ready"
+            android:src="@drawable/smartwatch_home"
             android:id="@+id/main_image"
             android:paddingTop="30dp"
             android:layout_gravity="center"

@@ -126,18 +126,33 @@ public class WatchListener extends WearableListenerService {
 
     //Move this to another method...
     private void changeDeviceState(String id, String state) {
-        SmartThingsModelManager.setDevices(ModelAndKeyStorage.getInstance().getStoredDevices(context));
-        Device device = SmartThingsModelManager.getDeviceByID(id);
+        // Get a Realm instance for this thread
+        Realm realm = Realm.getDefaultInstance();
+
+        //Find the device from the DB
+        Device device = realm.where(Device.class).equalTo("id",id).findFirst();
+
+//        SmartThingsModelManager.setDevices(ModelAndKeyStorage.getInstance().getStoredDevices(context));
+//        Device device = SmartThingsModelManager.getDeviceByID(id);
         if (device!=null) {
             Log.d(Values.TAG, "Setting " + device + " state to: " + state);
             SmartThings smartThings = SmartThings.getInstance();
             smartThings.setup(context);
             smartThings.setDeviceState(device, state);
+        } else {
+            MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("Cannot find device with id: ",id);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+            mixpanelAPI.track("Error Changing Device State", jsonObject);
         }
     }
 
     private void sayPhrase(String phrase) {
-        SmartThingsModelManager.setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
+//        SmartThingsModelManager.setPhrases(ModelAndKeyStorage.getInstance().getStoredPhrases(context));
         if (!SmartThingsModelManager.getPhrases().contains(phrase)) {
             Log.e(Values.TAG,"Phrase is not contained in Model manager!");
             return;

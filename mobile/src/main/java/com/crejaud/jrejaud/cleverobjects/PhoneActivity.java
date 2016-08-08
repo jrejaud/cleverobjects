@@ -1,30 +1,24 @@
 package com.crejaud.jrejaud.cleverobjects;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
 import com.github.jrejaud.models.Phrase;
-import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -43,18 +37,15 @@ public class PhoneActivity extends CleverObjectsActivity {
     private Button setupButton;
     private Button unpairButton;
     private FrameLayout mainImageFrame;
-    public static final String UPDATE_WEAR_APP = "UPDATE_WEAR_APP";
+    public static final String ENDPOINT_URL = "ENDPOINT_URL";
     private boolean updatedThisSession = false;
     private ImageView mainImage;
-    private MixpanelAPI mixpanelAPI;
+    private ProgressDialog updatingDevicesProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
-
-        //Init Mixpanel
-        mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
 
         // Create a RealmConfiguration that saves the Realm file in the app's "files" directory.
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
@@ -86,21 +77,57 @@ public class PhoneActivity extends CleverObjectsActivity {
         // Get a Realm instance for this thread
         Realm realm = Realm.getDefaultInstance();
 
-        //Set Devices Listener
-        RealmResults<Device> devices = realm.where(Device.class).findAll();
-        devices.addChangeListener(new RealmChangeListener<RealmResults<Device>>() {
-            @Override
-            public void onChange(RealmResults<Device> devices) {
-                if (devices.size()>0) {
-                    setSetupView();
-                } else {
-                    setNotSetupView();
-                }
+        //See if this activity was passed an endpoint URL by the pairing activity
+        String endpointURL = getIntent().getStringExtra(ENDPOINT_URL);
 
-            }
-        });
+        if (endpointURL!=null) {
+            //Need to update devices and phrases
+            updatingDevicesProgressDialog = new ProgressDialog(this);
+            updatingDevicesProgressDialog.setMessage("Updating Devices and Phrases");
+            updatingDevicesProgressDialog.setCancelable(false);
+            updatingDevicesProgressDialog.setIndeterminate(true);
+            updatingDevicesProgressDialog.show();
+            updateModelAndPhrases(this);
+            //show a stop message once its set...
+        } else {
+            //Check if user previously set devices or not
+            //See if the user already set devices (and update the UI if they did)
+            RealmResults<Device> devices = realm.where(Device.class).findAll();
+            setUIBasedOnDeviceCount(devices);
+        }
+
+
+//        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.endpointURIKey, url);
+//
+//        if (getIntent().getBooleanExtra(ENDPOINT_URL,false)) {
+//            updateModelAndPhrases();
+//        } else {
+//
+//        }
+//
+//        //Set Devices Listener
+//        RealmResults<Device> devices = realm.where(Device.class).findAll();
+//
+//        setUIBasedOnDeviceCount(devices);
+//
+//        devices.addChangeListener(new RealmChangeListener<RealmResults<Device>>() {
+//            @Override
+//            public void onChange(RealmResults<Device> devices) {
+//                setUIBasedOnDeviceCount(devices);
+//            }
+//        });
     }
 
+    //Change the UI based on how many devices the user set up
+    private void setUIBasedOnDeviceCount(RealmResults<Device> devices) {
+        if (devices.size()>0) {
+            setSetupView();
+        } else {
+            setNotSetupView();
+        }
+    }
+
+    //Called if devices are found
     private void setSetupView() {
         middleText.setText(getString(R.string.paired_message));
         setupButton.setText(getString(R.string.repair_smartthings));
@@ -122,13 +149,6 @@ public class PhoneActivity extends CleverObjectsActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (getIntent().getBooleanExtra(UPDATE_WEAR_APP, false)) {
-            if (!updatedThisSession) {
-                updateModelAndPhrases(this);
-                updatedThisSession = true;
-            }
-        }
     }
 
     @Override
@@ -186,7 +206,7 @@ public class PhoneActivity extends CleverObjectsActivity {
                 // Get a Realm instance for this thread
                 Realm realm = Realm.getDefaultInstance();
 
-                realm.executeTransactionAsync(new Realm.Transaction() {
+                realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         //Delete existing devices
@@ -194,22 +214,34 @@ public class PhoneActivity extends CleverObjectsActivity {
                         result.deleteAllFromRealm();
                         //Save the devices to realm
                         realm.copyToRealm(devices);
-
-                    }
-                }, new Realm.Transaction.OnSuccess() {
-                    @Override
-                    public void onSuccess() {
-                        //Success saved devices
-                        //Update phrases next
-                        updatePhrases();
-
-                    }
-                }, new Realm.Transaction.OnError() {
-                    @Override
-                    public void onError(Throwable error) {
-                        throw new RuntimeException(error);
                     }
                 });
+
+                updatePhrases();
+
+//                realm.executeTransactionAsync(new Realm.Transaction() {
+//                    @Override
+//                    public void execute(Realm realm) {
+//                        //Delete existing devices
+//                        RealmResults<Device> result = realm.where(Device.class).findAll();
+//                        result.deleteAllFromRealm();
+//                        //Save the devices to realm
+//                        realm.copyToRealm(devices);
+//                    }
+//                }, new Realm.Transaction.OnSuccess() {
+//                    @Override
+//                    public void onSuccess() {
+//                        //Success saved devices
+//                        //Update phrases next
+//                        updatePhrases();
+//
+//                    }
+//                }, new Realm.Transaction.OnError() {
+//                    @Override
+//                    public void onError(Throwable error) {
+//                        throw new RuntimeException(error);
+//                    }
+//                });
             }
         });
 
@@ -231,7 +263,8 @@ public class PhoneActivity extends CleverObjectsActivity {
             @Override
             public void onNext(final List<String> phrases) {
                 Realm realm = Realm.getDefaultInstance();
-                realm.executeTransactionAsync(new Realm.Transaction() {
+
+                realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         //Delete existing phrases
@@ -243,64 +276,82 @@ public class PhoneActivity extends CleverObjectsActivity {
                             realmPhrase.setName(phrase);
                         }
                     }
-                }, new Realm.Transaction.OnSuccess() {
-                    @Override
-                    public void onSuccess() {
-                        //Show user that update is complete
-                        setSetupView();
-
-                    }
-                }, new Realm.Transaction.OnError() {
-                    @Override
-                    public void onError(Throwable error) {
-                        throw new RuntimeException(error);
-                    }
                 });
 
+                updatingDevicesProgressDialog.dismiss();
+                Timber.d("Done update models and phrases");
+                setSetupView();
+
+//                realm.executeTransactionAsync(new Realm.Transaction() {
+//                    @Override
+//                    public void execute(Realm realm) {
+//                        //Delete existing phrases
+//                        RealmResults<Phrase> result = realm.where(Phrase.class).findAll();
+//                        result.deleteAllFromRealm();
+//                        //Save the phrases to realm
+//                        for (String phrase : phrases) {
+//                            Phrase realmPhrase = realm.createObject(Phrase.class);
+//                            realmPhrase.setName(phrase);
+//                        }
+//                    }
+//                }, new Realm.Transaction.OnSuccess() {
+//                    @Override
+//                    public void onSuccess() {
+//                        //Show user that update is complete
+//                        Timber.d("Done update models and phrases");
+//                        setSetupView();
+//
+//                    }
+//                }, new Realm.Transaction.OnError() {
+//                    @Override
+//                    public void onError(Throwable error) {
+//                        throw new RuntimeException(error);
+//                    }
+//                });
+
             }
         });
     }
 
-    @Deprecated
-    private void updatePhrases(final List<Device> devices) {
-        //Update Phrases
-        SmartThings.getInstance().getPhrases(new Subscriber<List<String>>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                throw new RuntimeException(e);
-            }
-
-            @Override
-            public void onNext(List<String> phrases) {
-                ModelAndKeyStorage.getInstance().storePhrases(context, phrases);
-                try {
-                    JSONObject props = new JSONObject();
-                    for (String phrase: phrases) {
-                        props.put(phrase,true);
-                    }
-                    mixpanelAPI.track("User Updated Phrases:", props);
-                } catch (JSONException e) {
-                    Timber.e("Unable to record user phrases");
-                }
-
-                //Set container to empty first (to refresh)
-                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, new SmartThingsDataContainer());
-                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, new SmartThingsDataContainer(devices,phrases));
-            }
-        });
-    }
+//    private void updatePhrases(final List<Device> devices) {
+//        //Update Phrases
+//        SmartThings.getInstance().getPhrases(new Subscriber<List<String>>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//            @Override
+//            public void onNext(List<Phrase> phrases) {
+//                ModelAndKeyStorage.getInstance().storePhrases(context, phrases);
+//                try {
+//                    JSONObject props = new JSONObject();
+//                    for (String phrase: phrases) {
+//                        props.put(phrase,true);
+//                    }
+//                    mixpanelAPI.track("User Updated Phrases:", props);
+//                } catch (JSONException e) {
+//                    Timber.e("Unable to record user phrases");
+//                }
+//
+//                //Set container to empty first (to refresh)
+//                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, new SmartThingsDataContainer());
+//                WearSocket.getInstance().updateDataItem(Values.DATA_PATH, Values.MODEL_KEY, new SmartThingsDataContainer(devices,phrases));
+//            }
+//        });
+//    }
 
     private void launchSmartThingsLogin() {
         Intent smartThingsLoginIntent = new Intent(this,SmartthingsLoginActivity.class);
         startActivity(smartThingsLoginIntent);
     }
 
-    @Deprecated
+
 //    private boolean hasUserAlreadySetUpSmartThings() {
 //        if (ModelAndKeyStorage.getInstance().getData(context,ModelAndKeyStorage.authTokenKey)==null) {
 //            return false;
@@ -320,7 +371,7 @@ public class PhoneActivity extends CleverObjectsActivity {
                 ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.authTokenKey, null);
                 //Remove local devices
                 Realm realm = Realm.getDefaultInstance();
-                realm.executeTransactionAsync(new Realm.Transaction() {
+                realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         //Delete existing devices
@@ -330,24 +381,13 @@ public class PhoneActivity extends CleverObjectsActivity {
                         //Delete existing Phrases
                         RealmResults<Phrase> phrasesResult = realm.where(Phrase.class).findAll();
                         phrasesResult.deleteAllFromRealm();
-
-                    }
-                }, new Realm.Transaction.OnSuccess() {
-                    @Override
-                    public void onSuccess() {
-                        //Delete the stuff on the watch and restart the app
-                        if (BuildConfig.FLAVOR.contains("noWatch")) {
-                            return;
-                        }
-                        WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, Values.DELETE_KEY);
-                        restartApp();
-                    }
-                }, new Realm.Transaction.OnError() {
-                    @Override
-                    public void onError(Throwable error) {
-                        throw new RuntimeException(error);
                     }
                 });
+                //Delete the stuff on the watch and restart the app
+                if (!BuildConfig.FLAVOR.contains("noWatch")) {
+                    WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, Values.DELETE_KEY);
+                }
+                restartApp();
             }
         });
 
