@@ -83,7 +83,7 @@ public class SmartThings {
         String typePath = getTypePath(device.getType());
         if (typePath==null) {
             //TODO Log error here, device is not a known type!
-            return;
+            throw new RuntimeException("Unknown type path");
         }
 //        Log.d(TAG,"typePath: "+typePath);
 //        Log.d(TAG,"command: "+command);
