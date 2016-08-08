@@ -77,8 +77,9 @@ public class SmartThings {
         });
     }
 
-    public void setDeviceState(final Device device, final String command) {
+    public void setDeviceState(Device device, final String command) {
 
+        final String deviceLabel = device.getLabel();
 
         String typePath = getTypePath(device.getType());
         if (typePath==null) {
@@ -91,7 +92,7 @@ public class SmartThings {
             @Override
             public void success(Object o, Response response) {
                 //TODO check that response is 200 (that means it worked)
-                String message = device.getLabel() + " has been set " + command;
+                String message = deviceLabel + " has been set " + command;
                 Log.d(TAG, message);
                 //TODO remember to have continuis updateDeviceState running!
                 //WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,message);
@@ -99,8 +100,7 @@ public class SmartThings {
 
             @Override
             public void failure(RetrofitError error) {
-                String message = "Error: "+device.getLabel()+" isn't responding!";
-                Log.d(TAG, String.valueOf(error));
+                throw new RuntimeException(error);
                 //WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,message);
             }
         });
