@@ -7,9 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
@@ -20,6 +22,7 @@ import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -37,6 +40,7 @@ public class PhoneActivity extends CleverObjectsActivity {
     private Button setupButton;
     private Button unpairButton;
     private FrameLayout mainImageFrame;
+    private ListView devicesListView;
     public static final String ENDPOINT_URL = "ENDPOINT_URL";
     private boolean updatedThisSession = false;
     private ImageView mainImage;
@@ -59,6 +63,8 @@ public class PhoneActivity extends CleverObjectsActivity {
         mainImageFrame = (FrameLayout) findViewById(R.id.main_image_frame);
 
         mainImage = (ImageView) findViewById(R.id.main_image);
+
+        devicesListView = (ListView) findViewById(R.id.devices_list_view);
 
         setupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,14 +135,37 @@ public class PhoneActivity extends CleverObjectsActivity {
 
     //Called if devices are found
     private void setSetupView() {
-        middleText.setText(getString(R.string.paired_message));
+        //Setup Listview with devices
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Device> devices = realm.where(Device.class).findAll();
+        List<String> deviceNames = new LinkedList<>();
+        for (Device device : devices) {
+            deviceNames.add(device.getLabel());
+        }
+
+        DevicesAdapter devicesAdapter = new DevicesAdapter(getBaseContext(),R.layout.simple_list_item_default,devices);
+
+        TextView textView = new TextView(context);
+
+//        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+
+        textView.setTextSize(20);
+//        textView.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
+
+        textView.setText("Paired Devices");
+
+        devicesListView.setAdapter(devicesAdapter);
+        devicesListView.addHeaderView(textView);
+        devicesListView.setVisibility(View.VISIBLE);
+
+        middleText.setVisibility(View.GONE);
         setupButton.setText(getString(R.string.repair_smartthings));
         unpairButton.setVisibility(View.VISIBLE);
-        mainImage.setImageResource(R.drawable.ic_app_ready);
+        mainImage.setVisibility(View.GONE);
     }
 
     private void setNotSetupView() {
-        mainImage.setImageResource(R.drawable.smartwatch_home);
+//        devicesListView.setVisibility(View.GONE);
     }
 
     private void restartApp() {
