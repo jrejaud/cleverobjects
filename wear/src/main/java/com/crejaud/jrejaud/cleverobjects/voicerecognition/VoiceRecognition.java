@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.crejaud.jrejaud.cleverobjects.devices.DeviceStateChange;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.DevicePOJO;
 import com.github.jrejaud.models.SmartThingsModelManager;
 
 import java.util.ArrayList;
@@ -86,10 +87,10 @@ public class VoiceRecognition {
         }
     }
 
-    private List<String> deviceLabelsToLowerCase(List<Device> devices) {
+    private List<String> deviceLabelsToLowerCase(List<DevicePOJO> devices) {
         ArrayList<String> lowerCaseList = new ArrayList<>();
 
-        for (Device device : devices) {
+        for (DevicePOJO device : devices) {
             String label = device.getLabel();
             label = label.replace(" ","");
             lowerCaseList.add(label.toLowerCase());

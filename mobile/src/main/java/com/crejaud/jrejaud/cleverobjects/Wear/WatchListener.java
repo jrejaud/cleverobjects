@@ -66,7 +66,7 @@ public class WatchListener extends WearableListenerService {
 
 
             //Get the devices from the DB
-            RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).build();
+            RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
             Realm.setDefaultConfiguration(realmConfig);
 
             // Get a Realm instance for this thread
@@ -150,6 +150,10 @@ public class WatchListener extends WearableListenerService {
 
     //Move this to another method...
     private void changeDeviceState(String id, String state) {
+        //Get the devices from the DB
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(realmConfig);
+
         // Get a Realm instance for this thread
         Realm realm = Realm.getDefaultInstance();
 

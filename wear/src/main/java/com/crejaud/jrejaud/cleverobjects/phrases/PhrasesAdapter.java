@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.crejaud.jrejaud.cleverobjects.R;
 import com.github.jrejaud.models.Phrase;
+import com.github.jrejaud.models.PhrasePOJO;
 
 import java.util.List;
 
@@ -16,12 +17,12 @@ import java.util.List;
  * Created by jrejaud on 6/29/15.
  */
 public class PhrasesAdapter extends WearableListView.Adapter {
-        private List<Phrase> phrases;
+        private List<PhrasePOJO> phrases;
         private final Context mContext;
         private final LayoutInflater mInflater;
 
         // Provide a suitable constructor (depends on the kind of phrases)
-        public PhrasesAdapter(Context context, List<Phrase> phrases) {
+        public PhrasesAdapter(Context context, List<PhrasePOJO> phrases) {
             mContext = context;
             mInflater = LayoutInflater.from(context);
             this.phrases = phrases;

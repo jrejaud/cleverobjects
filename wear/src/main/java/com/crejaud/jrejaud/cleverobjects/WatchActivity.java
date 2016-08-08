@@ -114,6 +114,7 @@ public class WatchActivity extends Activity {
             Timber.d(ex,"onDestroy Crash");
         }
         super.onStop();
+        finish();
     }
 
     private void setupWearSocket() {

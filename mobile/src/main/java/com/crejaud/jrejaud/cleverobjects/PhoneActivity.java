@@ -51,7 +51,7 @@ public class PhoneActivity extends CleverObjectsActivity {
         this.context = this;
 
         // Create a RealmConfiguration that saves the Realm file in the app's "files" directory.
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(realmConfig);
 
         setContentView(R.layout.activity_phone);
