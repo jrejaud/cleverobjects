@@ -42,7 +42,6 @@ public class PhoneActivity extends CleverObjectsActivity {
     private FrameLayout mainImageFrame;
     private ListView devicesListView;
     public static final String ENDPOINT_URL = "ENDPOINT_URL";
-    private boolean updatedThisSession = false;
     private ImageView mainImage;
     private ProgressDialog updatingDevicesProgressDialog;
 
@@ -158,7 +157,7 @@ public class PhoneActivity extends CleverObjectsActivity {
         devicesListView.addHeaderView(textView);
         devicesListView.setVisibility(View.VISIBLE);
 
-        middleText.setVisibility(View.GONE);
+        middleText.setText(R.string.paired_message);
         setupButton.setText(getString(R.string.repair_smartthings));
         unpairButton.setVisibility(View.VISIBLE);
         mainImage.setVisibility(View.GONE);

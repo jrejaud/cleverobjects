@@ -10,34 +10,32 @@ import java.util.List;
 public class SmartThingsDataContainer {
 
     @Expose
-    List<Device> devices;
+    List<DevicePOJO> devices;
 
     @Expose
-    List<Phrase> phrases;
+    List<PhrasePOJO> phrases;
 
     public SmartThingsDataContainer() {
     }
 
-    public SmartThingsDataContainer(List<Device> devices, List<Phrase> phrases) {
+    public SmartThingsDataContainer(List<DevicePOJO> devices, List<PhrasePOJO> phrases) {
         this.devices = devices;
         this.phrases = phrases;
     }
 
-    public void setDevices(List<Device> devices) {
+    public void setDevices(List<DevicePOJO> devices) {
         this.devices = devices;
     }
 
-    public void setPhrases(List<Phrase> phrases) {
+    public void setPhrases(List<PhrasePOJO> phrases) {
         this.phrases = phrases;
     }
 
-    public List<Device> getDevices() {
+    public List<DevicePOJO> getDevices() {
         return devices;
     }
 
-    public List<Phrase> getPhrases() {
+    public List<PhrasePOJO> getPhrases() {
         return phrases;
     }
-
-
 }

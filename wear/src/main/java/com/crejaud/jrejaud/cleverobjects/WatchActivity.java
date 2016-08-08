@@ -13,7 +13,9 @@ import com.crejaud.jrejaud.cleverobjects.devices.DevicesGridAdapter;
 import com.crejaud.jrejaud.cleverobjects.voicerecognition.VoiceRecognition;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.DevicePOJO;
 import com.github.jrejaud.models.Phrase;
+import com.github.jrejaud.models.PhrasePOJO;
 import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.models.SmartThingsModelManager;
@@ -99,7 +101,6 @@ public class WatchActivity extends Activity {
                 //Send a message to the app asking for updated devices
                 Timber.d("Ask the mobile app for update devices");
                 WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH, Values.REQUEST_DATA);
-                return;
             }
         });
 
@@ -131,17 +132,8 @@ public class WatchActivity extends Activity {
         });
     }
 
-    @Deprecated
-    private List<Device> getDevicesFromPreferences() {
-        return ModelAndKeyStorage.getInstance().getStoredDevices(context);
-    }
 
-    @Deprecated
-    private List<String> getPhrasesFromPreferences() {
-        return ModelAndKeyStorage.getInstance().getStoredPhrases(context);
-    }
-
-    private void updateDevicesView(List<Device> deviceList, List<Phrase> phrasesList) {
+    private void updateDevicesView(List<DevicePOJO> deviceList, List<PhrasePOJO> phrasesList) {
 
         GridViewPager gridViewPager = (GridViewPager) findViewById(R.id.main_menu_grid_view);
 

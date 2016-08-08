@@ -50,6 +50,7 @@ public class PhoneListener extends WearableListenerService {
     }
 
     @Override
+    //Not used for now
     public void onDataChanged(DataEventBuffer dataEvents) {
         Timber.d("On Data Changed");
         if (!hasBeenInitialized) {initializeListener();}

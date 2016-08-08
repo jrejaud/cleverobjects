@@ -6,7 +6,9 @@ import android.util.Log;
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.DevicePOJO;
 import com.github.jrejaud.models.Phrase;
+import com.github.jrejaud.models.PhrasePOJO;
 import com.github.jrejaud.models.SmartThingsDataContainer;
 import com.github.jrejaud.models.SmartThingsModelManager;
 import com.github.jrejaud.storage.ModelAndKeyStorage;
@@ -26,6 +28,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -51,6 +54,8 @@ public class WatchListener extends WearableListenerService {
         //See if this is a request for devices
         if (new String(messageEvent.getData()).equals(Values.REQUEST_DATA)) {
 
+            Log.d("TAG","Received Request DATA");
+
             //Setup WearSocket
             WearSocket.getInstance().setupAndConnect(context, Values.WEAR_CAPABILITY, new WearSocket.onErrorListener() {
                 @Override
@@ -61,29 +66,48 @@ public class WatchListener extends WearableListenerService {
 
 
             //Get the devices from the DB
-            RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+            RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).build();
             Realm.setDefaultConfiguration(realmConfig);
 
             // Get a Realm instance for this thread
             Realm realm = Realm.getDefaultInstance();
 
+            Log.d("TAG","Realm setup");
+
             //Get devices and phrases from DB
             RealmResults<Device> devices = realm.where(Device.class).findAll();
             RealmResults<Phrase> phrases = realm.where(Phrase.class).findAll();
 
+            Log.d("TAG","Gotten DB devices: "+devices);
+
+
             //If there are devices
-            if (devices!=null&&phrases.size()>0) {
+            if (devices!=null&&devices.size()>0) {
+
+                //Turn the devices into POJOs (Removing Realm references to make them smaller)
+                List<DevicePOJO> devicePOJOs = new LinkedList<>();
+                for (Device device : devices) {
+                    devicePOJOs.add(new DevicePOJO(device.getId(),device.getLabel(),device.getType(),device.getValue()));
+                }
+
+                List<PhrasePOJO> phrasePOJOs = new LinkedList<>();
+                for (Phrase phrase : phrases) {
+                    phrasePOJOs.add(new PhrasePOJO(phrase.getName()));
+                }
+
                 //Create SmartThingData Container
-                SmartThingsDataContainer smartThingsDataContainer = new SmartThingsDataContainer(devices,phrases);
+                SmartThingsDataContainer smartThingsDataContainer = new SmartThingsDataContainer(devicePOJOs,phrasePOJOs);
 
                 //Convert DataContainer to JSON
                 Gson gson = new Gson();
                 String jsonData = gson.toJson(smartThingsDataContainer);
 
                 //Send the DataContainer JSON String to the phone
+                Log.d("TAG","About to send jsonData to watch");
                 WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,jsonData);
             } else {
                 //If there are no devices, just send a NO DATA message
+                Log.d("TAG","Send no message data to watch");
                 WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,Values.NO_DATA);
                 MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
                 mixpanelAPI.track("No Data Message Sent",null);

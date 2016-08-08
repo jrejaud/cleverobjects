@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.crejaud.jrejaud.cleverobjects.PhrasesActivity;
 import com.crejaud.jrejaud.cleverobjects.R;
 import com.github.jrejaud.models.Device;
+import com.github.jrejaud.models.DevicePOJO;
 import com.github.jrejaud.models.SmartThingsModelManager;
 
 import java.util.List;
@@ -26,10 +27,10 @@ import java.util.Objects;
 public class DevicesGridAdapter extends GridPagerAdapter {
 
     private Context context;
-    private List<Device> devices;
+    private List<DevicePOJO> devices;
     public static final int SPEECH_REQUEST_CODE = 0;
 
-    public DevicesGridAdapter(Context context, List<Device> devices) {
+    public DevicesGridAdapter(Context context, List<DevicePOJO> devices) {
         this.context =context;
         this.devices = devices;
     }
@@ -61,7 +62,7 @@ public class DevicesGridAdapter extends GridPagerAdapter {
         }
         else {
             //It is a device!
-            Device device = devices.get(col-2);
+            DevicePOJO device = devices.get(col-2);
             itemName.setText(device.getLabel());
             if (Objects.equals(device.getType(), Device.LOCK)) {
                 menuIcon.setImageResource(R.drawable.ic_lock_white_24dp);

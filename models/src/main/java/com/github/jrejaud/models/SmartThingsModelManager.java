@@ -12,35 +12,35 @@ import java.util.List;
  */
 public class SmartThingsModelManager {
 
-    private static List<Device> Devices = new ArrayList<>();
-    private static List<Phrase> Phrases = new ArrayList<>();
+    private static List<DevicePOJO> Devices = new ArrayList<>();
+    private static List<PhrasePOJO> Phrases = new ArrayList<>();
 
-    public static List<Device> getDevices() {
+    public static List<DevicePOJO> getDevices() {
         return Devices;
     }
 
-    public static List<Phrase> getPhrases() {
+    public static List<PhrasePOJO> getPhrases() {
         return Phrases;
     }
 
-    public static void setPhrases(List<Phrase> phrases) {
+    public static void setPhrases(List<PhrasePOJO> phrases) {
         SmartThingsModelManager.Phrases = phrases;
     }
 
-    public static void setDevices(List<Device> devices) { SmartThingsModelManager.Devices = devices; }
+    public static void setDevices(List<DevicePOJO> devices) { SmartThingsModelManager.Devices = devices; }
 
-    public static Device getDeviceByID(String id) {
-        //If there are no devices, it means that there is no auth key saved on the phone.
-        if (Devices==null) {
-            return null;
-        }
-        for (Device device :Devices) {
-            if (device.getId().equals(id)) {
-                return device;
-            }
-        }
-        return null;
-    }
+//    public static Device getDeviceByID(String id) {
+//        //If there are no devices, it means that there is no auth key saved on the phone.
+//        if (Devices==null) {
+//            return null;
+//        }
+//        for (Device device :Devices) {
+//            if (device.getId().equals(id)) {
+//                return device;
+//            }
+//        }
+//        return null;
+//    }
 
 
 }
