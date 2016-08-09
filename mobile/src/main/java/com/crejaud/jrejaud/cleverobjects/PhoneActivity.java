@@ -224,7 +224,7 @@ public class PhoneActivity extends CleverObjectsActivity {
                     alertDialog.show();
 
                 }
-        })
+        });
 
         devicesListView.setVisibility(View.VISIBLE);
 
