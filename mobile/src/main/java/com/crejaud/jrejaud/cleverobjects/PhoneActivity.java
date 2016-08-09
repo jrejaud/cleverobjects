@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -164,10 +165,8 @@ public class PhoneActivity extends CleverObjectsActivity {
                 //Get the device that the user selected
                 final Device device = devicesAdapter.getItem(position);
                 //If item does not have a name
-                if (!device.getLabel().isEmpty()) {
                     //Let the user enter a new name
-                    //TODO
-                    Subscriber<String> deviceLabelSubscriber = new Subscriber<String>() {
+                    final Subscriber<String> deviceLabelSubscriber = new Subscriber<String>() {
                         @Override
                         public void onCompleted() {
 
@@ -196,11 +195,36 @@ public class PhoneActivity extends CleverObjectsActivity {
                         }
                     };
 
-                    deviceLabelSubscriber.onNext("Test Name2");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Set Device Label");
+
+                    final EditText input = new EditText(context);
+
+                    builder.setView(input);
+
+                    builder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String newLabel = input.getText().toString();
+                            deviceLabelSubscriber.onNext(newLabel);
+
+                        }
+                    });
+
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Don't do anything
+                        }
+                    });
+
+                    AlertDialog alertDialog = builder.create();
+                    //Set some padding
+                    alertDialog.setView(input,40,20,40,10);
+                    alertDialog.show();
 
                 }
-            }
-        });
+        })
 
         devicesListView.setVisibility(View.VISIBLE);
 
