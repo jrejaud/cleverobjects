@@ -43,6 +43,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src/noWatchDebug/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/noWatchDebug/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/noWatchDebug/shaders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/noWatch/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/noWatch/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/noWatch/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/noWatch/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/noWatch/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/noWatch/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNoWatchDebug/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNoWatchDebug/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNoWatchDebug/assets" type="java-test-resource" />
@@ -51,12 +57,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/testNoWatchDebug/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNoWatchDebug/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testNoWatchDebug/shaders" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/noWatch/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/noWatch/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/noWatch/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/noWatch/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/noWatch/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/noWatch/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/noWatch/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/noWatch/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/noWatch/assets" type="java-resource" />
@@ -65,14 +65,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/noWatch/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/noWatch/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/noWatch/shaders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNoWatch/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNoWatch/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNoWatch/assets" type="java-test-resource" />
@@ -81,6 +73,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNoWatch/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNoWatch/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestNoWatch/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/testNoWatch/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/assets" type="java-resource" />
