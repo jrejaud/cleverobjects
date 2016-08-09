@@ -67,4 +67,7 @@ dependencies {
     }
     //Mix Panel
     compile "com.mixpanel.android:mixpanel-android:4.+"
+
+    //Facebook
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

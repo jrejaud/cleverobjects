@@ -14,4 +14,6 @@
     <string name="support">Support</string>
     <string name="url_google_plus">https://plus.google.com/communities/114621976777723010004</string>
     <string name="paired_message">Start CleverObjects on your smartwatch to control your paired devices.</string>
+    <!--Facebook App ID-->
+    <string name="facebook_app_id">641652642659818</string>
 </resources>
