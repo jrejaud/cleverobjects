@@ -9,6 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.jrejaud.models.Device;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -39,6 +43,20 @@ public class DevicesAdapter extends ArrayAdapter<Device> {
         TextView title = (TextView) convertView.findViewById(R.id.text);
         ImageView deviceIcon = (ImageView) convertView.findViewById(R.id.image);
         // Populate the data into the template view using the data object
+
+        MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(getContext(),"d09bbd29f9af4459edcacbad0785c4c0");
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("Label",device.getLabel());
+            jsonObject.put("Type",device.getType());
+            jsonObject.put("ID",device.getId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mixpanelAPI.track("Show new device adapter device", jsonObject);
+
+
         title.setText(device.getLabel());
         Timber.d("Device found: "+device.getLabel()+", "+device.getType());
         if (device.getType().equals("lock")) {

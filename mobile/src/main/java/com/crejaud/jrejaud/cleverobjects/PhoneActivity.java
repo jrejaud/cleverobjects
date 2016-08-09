@@ -144,20 +144,22 @@ public class PhoneActivity extends CleverObjectsActivity {
 
         DevicesAdapter devicesAdapter = new DevicesAdapter(getBaseContext(),R.layout.simple_list_item_default,devices);
 
-        TextView textView = new TextView(context);
+        //Header
+        TextView pairedDevicesHeaderTextView = (TextView) findViewById(R.id.paired_devices_header);
+        pairedDevicesHeaderTextView.setVisibility(View.VISIBLE);
 
-//        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        TextView pairedDevicesFooterTextView = (TextView) findViewById(R.id.paired_devices_footer);
+        pairedDevicesFooterTextView.setVisibility(View.VISIBLE);
 
-        textView.setTextSize(20);
-//        textView.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-
-        textView.setText("Paired Devices");
+        //Footer
+//        TextView footerView = new TextView(context);
+//        footerView.setTextSize(16);
+//        footerView.setText("Start CleverObjects on your smartwatch to control your paired devices");
 
         devicesListView.setAdapter(devicesAdapter);
-        devicesListView.addHeaderView(textView);
         devicesListView.setVisibility(View.VISIBLE);
 
-        middleText.setText(R.string.paired_message);
+        middleText.setVisibility(View.GONE);
         setupButton.setText(getString(R.string.repair_smartthings));
         unpairButton.setVisibility(View.VISIBLE);
         mainImage.setVisibility(View.GONE);
