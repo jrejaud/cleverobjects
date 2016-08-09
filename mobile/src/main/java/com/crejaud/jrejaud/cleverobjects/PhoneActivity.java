@@ -22,6 +22,9 @@ import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -233,6 +236,22 @@ public class PhoneActivity extends CleverObjectsActivity {
 
             @Override
             public void onNext(final List<Device> devices) {
+
+
+                MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context,"d09bbd29f9af4459edcacbad0785c4c0");
+                for (Device device : devices) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("Label",device.getLabel());
+                        jsonObject.put("Type",device.getType());
+                        jsonObject.put("ID",device.getId());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    mixpanelAPI.track("Update Devices:", jsonObject);
+                }
+
                 // Get a Realm instance for this thread
                 Realm realm = Realm.getDefaultInstance();
 
@@ -243,35 +262,12 @@ public class PhoneActivity extends CleverObjectsActivity {
                         RealmResults<Device> result = realm.where(Device.class).findAll();
                         result.deleteAllFromRealm();
                         //Save the devices to realm
+
                         realm.copyToRealm(devices);
                     }
                 });
 
                 updatePhrases();
-
-//                realm.executeTransactionAsync(new Realm.Transaction() {
-//                    @Override
-//                    public void execute(Realm realm) {
-//                        //Delete existing devices
-//                        RealmResults<Device> result = realm.where(Device.class).findAll();
-//                        result.deleteAllFromRealm();
-//                        //Save the devices to realm
-//                        realm.copyToRealm(devices);
-//                    }
-//                }, new Realm.Transaction.OnSuccess() {
-//                    @Override
-//                    public void onSuccess() {
-//                        //Success saved devices
-//                        //Update phrases next
-//                        updatePhrases();
-//
-//                    }
-//                }, new Realm.Transaction.OnError() {
-//                    @Override
-//                    public void onError(Throwable error) {
-//                        throw new RuntimeException(error);
-//                    }
-//                });
             }
         });
 
