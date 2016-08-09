@@ -91,9 +91,10 @@ public class SmartThings {
         smartThingsService.setDevice(typePath, device.getId(), command, new Callback<Object>() {
             @Override
             public void success(Object o, Response response) {
-                //TODO check that response is 200 (that means it worked)
-                String message = deviceLabel + " has been set " + command;
-                Log.d(TAG, message);
+                if (response.getStatus()==200) {
+                    String message = deviceLabel + " has been set " + command;
+                    Log.d(TAG, message);
+                }
                 //TODO remember to have continuis updateDeviceState running!
                 //WearSocket.getInstance().sendMessage(Values.MESSAGE_PATH,message);
             }
