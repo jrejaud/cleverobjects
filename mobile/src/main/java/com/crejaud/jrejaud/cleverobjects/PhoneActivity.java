@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -139,27 +140,68 @@ public class PhoneActivity extends CleverObjectsActivity {
     private void setSetupView() {
         //Setup Listview with devices
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Device> devices = realm.where(Device.class).findAll();
+        final RealmResults<Device> devices = realm.where(Device.class).findAll();
         List<String> deviceNames = new LinkedList<>();
         for (Device device : devices) {
             deviceNames.add(device.getLabel());
         }
 
-        DevicesAdapter devicesAdapter = new DevicesAdapter(getBaseContext(),R.layout.simple_list_item_default,devices);
+        final DevicesAdapter devicesAdapter = new DevicesAdapter(getBaseContext(),R.layout.simple_list_item_default,devices);
 
         //Header
         TextView pairedDevicesHeaderTextView = (TextView) findViewById(R.id.paired_devices_header);
         pairedDevicesHeaderTextView.setVisibility(View.VISIBLE);
 
+        //Footer
         TextView pairedDevicesFooterTextView = (TextView) findViewById(R.id.paired_devices_footer);
         pairedDevicesFooterTextView.setVisibility(View.VISIBLE);
 
-        //Footer
-//        TextView footerView = new TextView(context);
-//        footerView.setTextSize(16);
-//        footerView.setText("Start CleverObjects on your smartwatch to control your paired devices");
-
         devicesListView.setAdapter(devicesAdapter);
+
+        devicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Get the device that the user selected
+                final Device device = devicesAdapter.getItem(position);
+                //If item does not have a name
+                if (!device.getLabel().isEmpty()) {
+                    //Let the user enter a new name
+                    //TODO
+                    Subscriber<String> deviceLabelSubscriber = new Subscriber<String>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        @Override
+                        public void onNext(final String label) {
+                            // Get a Realm instance for this thread
+                            Realm realm = Realm.getDefaultInstance();
+
+                            //Update the device label to this new name
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    device.setLabel(label);
+                                }
+                            });
+
+                            devicesAdapter.notifyDataSetChanged();
+
+                        }
+                    };
+
+                    deviceLabelSubscriber.onNext("Test Name2");
+
+                }
+            }
+        });
+
         devicesListView.setVisibility(View.VISIBLE);
 
         middleText.setVisibility(View.GONE);
