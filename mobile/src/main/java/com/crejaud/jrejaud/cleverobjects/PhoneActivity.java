@@ -354,21 +354,25 @@ public class PhoneActivity extends CleverObjectsActivity {
 
             @Override
             public void onNext(final List<String> phrases) {
-                Realm realm = Realm.getDefaultInstance();
 
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        //Delete existing phrases
-                        RealmResults<Phrase> result = realm.where(Phrase.class).findAll();
-                        result.deleteAllFromRealm();
-                        //Save the phrases to realm
-                        for (String phrase : phrases) {
-                            Phrase realmPhrase = realm.createObject(Phrase.class);
-                            realmPhrase.setName(phrase);
+                //Save the phrases if there are any
+                if (phrases.size()>0) {
+                    Realm realm = Realm.getDefaultInstance();
+
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            //Delete existing phrases
+                            RealmResults<Phrase> result = realm.where(Phrase.class).findAll();
+                            result.deleteAllFromRealm();
+                            //Save the phrases to realm
+                            for (String phrase : phrases) {
+                                Phrase realmPhrase = realm.createObject(Phrase.class);
+                                realmPhrase.setName(phrase);
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
                 updatingDevicesProgressDialog.dismiss();
                 Timber.d("Done update models and phrases");
