@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crejaud.jrejaud.cleverobjects.Server.SmartThings;
 import com.github.jrejaud.WearSocket;
@@ -93,7 +94,7 @@ public class PhoneActivity extends CleverObjectsActivity {
         if (endpointURL!=null) {
             //Need to update devices and phrases
             updatingDevicesProgressDialog = new ProgressDialog(this);
-            updatingDevicesProgressDialog.setMessage("Updating Devices and Phrases");
+            updatingDevicesProgressDialog.setMessage("Updating Devices");
             updatingDevicesProgressDialog.setCancelable(false);
             updatingDevicesProgressDialog.setIndeterminate(true);
             updatingDevicesProgressDialog.show();
@@ -105,27 +106,6 @@ public class PhoneActivity extends CleverObjectsActivity {
             RealmResults<Device> devices = realm.where(Device.class).findAll();
             setUIBasedOnDeviceCount(devices);
         }
-
-
-//        ModelAndKeyStorage.getInstance().storeData(context, ModelAndKeyStorage.endpointURIKey, url);
-//
-//        if (getIntent().getBooleanExtra(ENDPOINT_URL,false)) {
-//            updateModelAndPhrases();
-//        } else {
-//
-//        }
-//
-//        //Set Devices Listener
-//        RealmResults<Device> devices = realm.where(Device.class).findAll();
-//
-//        setUIBasedOnDeviceCount(devices);
-//
-//        devices.addChangeListener(new RealmChangeListener<RealmResults<Device>>() {
-//            @Override
-//            public void onChange(RealmResults<Device> devices) {
-//                setUIBasedOnDeviceCount(devices);
-//            }
-//        });
     }
 
     //Change the UI based on how many devices the user set up
@@ -297,6 +277,8 @@ public class PhoneActivity extends CleverObjectsActivity {
 
             @Override
             public void onError(Throwable e) {
+                updatingDevicesProgressDialog.dismiss();
+                Toast.makeText(getBaseContext(),R.string.toast_get_devices_error,Toast.LENGTH_SHORT).show();
                 throw new RuntimeException(e);
             }
 
@@ -333,22 +315,30 @@ public class PhoneActivity extends CleverObjectsActivity {
                     }
                 });
 
-                updatePhrases();
+                updatingDevicesProgressDialog.dismiss();
+                Timber.d("Done update");
+                //Restart App
+                restartApp();
             }
         });
 
     }
 
+    //Wtf it isn't working anymore
+    @Deprecated
     private void updatePhrases() {
         //Update Phrases
+        updatingDevicesProgressDialog.setMessage("Updating Phrases");
         SmartThings.getInstance().getPhrases(new Subscriber<List<String>>() {
             @Override
             public void onCompleted() {
-
+                Timber.d("Updating phrases complete");
             }
 
             @Override
             public void onError(Throwable e) {
+                updatingDevicesProgressDialog.dismiss();
+                Toast.makeText(getBaseContext(),R.string.toast_get_devices_error,Toast.LENGTH_SHORT).show();
                 throw new RuntimeException(e);
             }
 
@@ -378,32 +368,6 @@ public class PhoneActivity extends CleverObjectsActivity {
                 Timber.d("Done update models and phrases");
                 setSetupView();
 
-//                realm.executeTransactionAsync(new Realm.Transaction() {
-//                    @Override
-//                    public void execute(Realm realm) {
-//                        //Delete existing phrases
-//                        RealmResults<Phrase> result = realm.where(Phrase.class).findAll();
-//                        result.deleteAllFromRealm();
-//                        //Save the phrases to realm
-//                        for (String phrase : phrases) {
-//                            Phrase realmPhrase = realm.createObject(Phrase.class);
-//                            realmPhrase.setName(phrase);
-//                        }
-//                    }
-//                }, new Realm.Transaction.OnSuccess() {
-//                    @Override
-//                    public void onSuccess() {
-//                        //Show user that update is complete
-//                        Timber.d("Done update models and phrases");
-//                        setSetupView();
-//
-//                    }
-//                }, new Realm.Transaction.OnError() {
-//                    @Override
-//                    public void onError(Throwable error) {
-//                        throw new RuntimeException(error);
-//                    }
-//                });
 
             }
         });

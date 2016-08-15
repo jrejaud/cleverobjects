@@ -42,7 +42,7 @@ public class DevicesGridAdapter extends GridPagerAdapter {
 
     @Override
     public int getColumnCount(int i) {
-        return devices.size()+2;
+        return devices.size()+1;
     }
 
     @Override
@@ -56,13 +56,9 @@ public class DevicesGridAdapter extends GridPagerAdapter {
             //Use xl size and 24 dp for icons
             menuIcon.setImageResource(R.drawable.ic_mic_white_24dp);
         }
-        else if (col==1) {
-            itemName.setText("Hello, Home");
-            menuIcon.setImageResource(R.drawable.ic_home_white_24dp);
-        }
         else {
             //It is a device!
-            DevicePOJO device = devices.get(col-2);
+            DevicePOJO device = devices.get(col-1);
             itemName.setText(device.getLabel());
             if (Objects.equals(device.getType(), Device.LOCK)) {
                 menuIcon.setImageResource(R.drawable.ic_lock_white_24dp);
@@ -79,11 +75,9 @@ public class DevicesGridAdapter extends GridPagerAdapter {
             public void onClick(View v) {
                 if (col == 0) {
                     startVoiceRecognition();
-                } else if (col == 1) {
-                    startPhrasesActivity();
                 } else {
                     DeviceStateChange deviceStateChange = new DeviceStateChange();
-                    deviceStateChange.updateDeviceState(col-2,Device.TOGGLE);
+                    deviceStateChange.updateDeviceState(col-1,Device.TOGGLE);
                 }
             }
         });
