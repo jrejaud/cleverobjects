@@ -160,8 +160,6 @@ public class WatchListener extends WearableListenerService {
         //Find the device from the DB
         Device device = realm.where(Device.class).equalTo("id",id).findFirst();
 
-//        SmartThingsModelManager.setDevices(ModelAndKeyStorage.getInstance().getStoredDevices(context));
-//        Device device = SmartThingsModelManager.getDeviceByID(id);
         if (device!=null) {
             Log.d(Values.TAG, "Setting " + device + " state to: " + state);
             SmartThings smartThings = SmartThings.getInstance();

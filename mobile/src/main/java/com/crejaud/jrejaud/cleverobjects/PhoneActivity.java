@@ -91,6 +91,25 @@ public class PhoneActivity extends CleverObjectsActivity {
         //See if this activity was passed an endpoint URL by the pairing activity
         String endpointURL = getIntent().getStringExtra(ENDPOINT_URL);
 
+        //Try it also with this (sometimes the first intent is not passed??)
+        String storedEndpointURL = ModelAndKeyStorage.getInstance().getData(this,ModelAndKeyStorage.endpointURIKey);
+
+        String accessToken = ModelAndKeyStorage.getInstance().getData(this,ModelAndKeyStorage.authTokenKey);
+
+        MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("intentEndpointURL",endpointURL);
+            jsonObject.put("storedEndpointURL",storedEndpointURL);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Timber.d(jsonObject.toString());
+
+        mixpanelAPI.track("Accessing endpoint URLs", jsonObject);
+
+        //Sometimes this is skipped
         if (endpointURL!=null) {
             //Need to update devices and phrases
             updatingDevicesProgressDialog = new ProgressDialog(this);
@@ -98,12 +117,55 @@ public class PhoneActivity extends CleverObjectsActivity {
             updatingDevicesProgressDialog.setCancelable(false);
             updatingDevicesProgressDialog.setIndeterminate(true);
             updatingDevicesProgressDialog.show();
-            updateModelAndPhrases(this);
-            //show a stop message once its set...
+            updateModelAndPhrases(this, accessToken, endpointURL, new Subscriber<Boolean>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    updatingDevicesProgressDialog.dismiss();
+                    //Need to run this on UI thread
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Error");
+                            builder.setMessage("Error getting your devices from SmartThings");
+                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            builder.create().show();
+                        }
+                    });
+//                    Toast.makeText(getBaseContext(),R.string.toast_get_devices_error,Toast.LENGTH_SHORT).show();
+//                    throw new RuntimeException(e);
+                }
+
+                @Override
+                public void onNext(Boolean aBoolean) {
+                    //Check if user previously set devices or not
+                    //See if the user already set devices (and update the UI if they did)
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Realm realm = Realm.getDefaultInstance();
+                            RealmResults<Device> devices = realm.where(Device.class).findAll();
+                            //show a stop message once its set...
+                            setUIBasedOnDeviceCount(devices);
+                        }
+                    });
+                }
+            });
         } else {
             //Check if user previously set devices or not
             //See if the user already set devices (and update the UI if they did)
             RealmResults<Device> devices = realm.where(Device.class).findAll();
+            //show a stop message once its set...
             setUIBasedOnDeviceCount(devices);
         }
     }
@@ -218,6 +280,7 @@ public class PhoneActivity extends CleverObjectsActivity {
 //        devicesListView.setVisibility(View.GONE);
     }
 
+    @Deprecated
     private void restartApp() {
         Intent intent = new Intent(this,PhoneActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -265,10 +328,10 @@ public class PhoneActivity extends CleverObjectsActivity {
         });
     }
 
-    private void updateModelAndPhrases(final Context context) {
+    private void updateModelAndPhrases(final Context context, String authToken, String endpointURL, final Subscriber<Boolean> updateCompleteSubscriber) {
 
         //Update Device Model
-        SmartThings.getInstance().setup(context); //Need to set this up before you can do anything fancy
+        SmartThings.getInstance().setup(context, authToken, endpointURL); //Need to set this up before you can do anything fancy
         SmartThings.getInstance().getDevices(new Subscriber<List<Device>>() {
             @Override
             public void onCompleted() {
@@ -277,15 +340,11 @@ public class PhoneActivity extends CleverObjectsActivity {
 
             @Override
             public void onError(Throwable e) {
-                updatingDevicesProgressDialog.dismiss();
-                Toast.makeText(getBaseContext(),R.string.toast_get_devices_error,Toast.LENGTH_SHORT).show();
-                throw new RuntimeException(e);
+                updateCompleteSubscriber.onError(e);
             }
 
             @Override
             public void onNext(final List<Device> devices) {
-
-
                 MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context,"d09bbd29f9af4459edcacbad0785c4c0");
                 for (Device device : devices) {
                     JSONObject jsonObject = new JSONObject();
@@ -317,8 +376,7 @@ public class PhoneActivity extends CleverObjectsActivity {
 
                 updatingDevicesProgressDialog.dismiss();
                 Timber.d("Done update");
-                //Restart App
-                restartApp();
+                updateCompleteSubscriber.onNext(true);
             }
         });
 

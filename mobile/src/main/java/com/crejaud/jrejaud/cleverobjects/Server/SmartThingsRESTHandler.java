@@ -33,25 +33,24 @@ public class SmartThingsRESTHandler {
     }
 
 
-    public SmartThingsService getSmartThingsService(Context context) {
-        ModelAndKeyStorage modelAndKeyStorage = ModelAndKeyStorage.getInstance();
-        final String authenticationToken = modelAndKeyStorage.getData(context,ModelAndKeyStorage.authTokenKey);
-        String endpointURI = modelAndKeyStorage.getData(context,ModelAndKeyStorage.endpointURIKey);
+    public SmartThingsService getSmartThingsService(Context context, final String authToken, String endpointURL) {
 
 //        Log.d(TAG,"Setting up SmartThings Service...");
 //        Log.d(TAG,"Auth token: "+authenticationToken);
 //        Log.d(TAG,"endpoint URI: "+endpointURI);
+
+        //Record Auth token and endpointURL via MP (to make sure they are not null)
 
 
         RequestInterceptor requestInterceptor = new RequestInterceptor() {
             @Override
             public void intercept(RequestFacade request) {
                 request.addHeader("Content-Type","application/json");
-                request.addHeader("Authorization", "Bearer " + authenticationToken);
+                request.addHeader("Authorization", "Bearer " + authToken);
             }
         };
         RestAdapter SmartThingsRestAdapter = new RestAdapter.Builder()
-                .setEndpoint("https://graph.api.smartthings.com/api/smartapps/installations/"+endpointURI)
+                .setEndpoint("https://graph.api.smartthings.com/api/smartapps/installations/"+endpointURL)
                 .setRequestInterceptor(requestInterceptor)
                 .build();
         smartThingsService = SmartThingsRestAdapter.create(SmartThingsService.class);

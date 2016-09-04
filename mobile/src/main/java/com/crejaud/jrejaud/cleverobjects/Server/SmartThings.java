@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.github.jrejaud.WearSocket;
 import com.github.jrejaud.models.Device;
 import com.github.jrejaud.models.SmartThingsModelManager;
+import com.github.jrejaud.storage.ModelAndKeyStorage;
 import com.github.jrejaud.values.Values;
 
 import java.util.ArrayList;
@@ -42,13 +43,20 @@ public class SmartThings {
 
     public void setup(Context context) {
         this.context = context;
-        smartThingsService = SmartThingsRESTHandler.getInstance().getSmartThingsService(context);
+        String authToken = ModelAndKeyStorage.getInstance().getData(context,ModelAndKeyStorage.authTokenKey);
+        String endpointURL = ModelAndKeyStorage.getInstance().getData(context,ModelAndKeyStorage.endpointURIKey);
+        smartThingsService = SmartThingsRESTHandler.getInstance().getSmartThingsService(context, authToken, endpointURL);
+    }
+
+    public void setup(Context context, String authToken, String endpointURL) {
+        this.context = context;
+        smartThingsService = SmartThingsRESTHandler.getInstance().getSmartThingsService(context, authToken, endpointURL);
     }
 
     public void getDevices(final Subscriber<List<Device>> devicesSubscriber) {
         //TODO Does this crap even need to be here?
         if (smartThingsService==null) {
-            Toast.makeText(context,"Please login to SmartThings",Toast.LENGTH_SHORT).show();
+            devicesSubscriber.onError(new Throwable("Please login to SmartThings before trying to get devices"));
             return;
         }
         Observable.combineLatest(smartThingsService.getSwitchesObservable(), smartThingsService.getLocksObservable(), new Func2<List<Device>, List<Device>, List<Device>>() {
