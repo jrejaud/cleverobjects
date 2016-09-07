@@ -16,5 +16,5 @@
     <string name="paired_message">Start CleverObjects on your smartwatch to control your paired devices.</string>
     <!--Facebook App ID-->
     <string name="facebook_app_id">641652642659818</string>
-    <string name="toast_get_devices_error">Error getting your Devices from SmartThings, please try again</string>
+    <string name="toast_get_devices_error">Error getting your Devices from SmartThings, please try again.</string>
 </resources>
