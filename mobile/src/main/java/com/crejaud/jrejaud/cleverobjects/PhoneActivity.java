@@ -89,12 +89,12 @@ public class PhoneActivity extends CleverObjectsActivity {
         Realm realm = Realm.getDefaultInstance();
 
         //See if this activity was passed an endpoint URL by the pairing activity
-        String endpointURL = getIntent().getStringExtra(ENDPOINT_URL);
+        final String endpointURL = getIntent().getStringExtra(ENDPOINT_URL);
 
         //Try it also with this (sometimes the first intent is not passed??)
         String storedEndpointURL = ModelAndKeyStorage.getInstance().getData(this,ModelAndKeyStorage.endpointURIKey);
 
-        String accessToken = ModelAndKeyStorage.getInstance().getData(this,ModelAndKeyStorage.authTokenKey);
+        final String accessToken = ModelAndKeyStorage.getInstance().getData(this,ModelAndKeyStorage.authTokenKey);
 
         MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(this,"d09bbd29f9af4459edcacbad0785c4c0");
         JSONObject jsonObject = new JSONObject();
@@ -125,6 +125,19 @@ public class PhoneActivity extends CleverObjectsActivity {
 
                 @Override
                 public void onError(Throwable e) {
+                    //Record this error
+                    MixpanelAPI mixpanelAPI = MixpanelAPI.getInstance(context,"d09bbd29f9af4459edcacbad0785c4c0");
+                        JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("accessToken",accessToken);
+                        jsonObject.put("endpointURL",endpointURL);
+                        jsonObject.put("Error",e.toString());
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                        mixpanelAPI.track("GET DEVICES ERROR:", jsonObject);
+
+                    //Show a message to the user
                     updatingDevicesProgressDialog.dismiss();
                     //Need to run this on UI thread
                     runOnUiThread(new Runnable() {
@@ -132,7 +145,7 @@ public class PhoneActivity extends CleverObjectsActivity {
                         public void run() {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle("Error");
-                            builder.setMessage("Error getting your devices from SmartThings");
+                            builder.setMessage("Error getting your devices from SmartThings, Support has been notified as to this issue. ");
                             builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
