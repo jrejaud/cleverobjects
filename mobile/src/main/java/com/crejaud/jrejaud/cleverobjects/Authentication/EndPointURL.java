@@ -67,10 +67,13 @@ public class EndPointURL extends AsyncTask<Void,Void,String> {
 
             JSONObject obj = new JSONObject(fixedResponseString);
 
-            String endpointURL = obj.get("url").toString();
+//            String endpointURL = obj.get("url").toString();
+//
+//            //Remove first / from endpointURL
+//            endpointURL = endpointURL.substring(29, endpointURL.length());
 
-            //Remove first / from endpointURL
-            endpointURL = endpointURL.substring(29, endpointURL.length());
+            String fullEndpointURL = obj.getString("uri");
+
 
 
             //Get the values from the Response URL!!!! (for switches)
@@ -87,7 +90,7 @@ public class EndPointURL extends AsyncTask<Void,Void,String> {
 //            String reponseValuesString = getStringfromResponse(responseValues);
 
 
-            return endpointURL; //endpointValues.toString();
+            return fullEndpointURL; //endpointValues.toString();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -110,6 +113,7 @@ public class EndPointURL extends AsyncTask<Void,Void,String> {
     }
 
 
+    @Deprecated
     private Uri getEndpointValuesUri(String endpointsURL, String itemType) {
         Uri.Builder builder = new Uri.Builder();
         return builder.scheme("https")
